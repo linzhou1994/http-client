@@ -5,6 +5,7 @@ import java.util.Map;
 
 /**
  * 请求头存储类
+ *
  * @author linzhou
  */
 public class HttpHeader {
