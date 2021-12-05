@@ -1,7 +1,7 @@
 package com.http.client.factorybean;
 
-import com.http.client.config.HttpClientConfig;
 import com.http.client.enums.HttpRequestMethod;
+import com.http.client.exception.ParamException;
 import com.http.client.proxy.AbstractHttpProxy;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
@@ -13,6 +13,7 @@ import java.util.Objects;
 
 /**
  * HTTPClient工厂bean
+ *
  * @author linzhou
  */
 public class HttpFactoryBean implements FactoryBean<Object>, InitializingBean, ApplicationContextAware {
@@ -39,9 +40,8 @@ public class HttpFactoryBean implements FactoryBean<Object>, InitializingBean, A
 
     @Override
     public Object getObject() throws Exception {
-        if (Objects.isNull(proxyClass)){
-            HttpClientConfig config = applicationContext.getBean(HttpClientConfig.class);
-            proxyClass = (Class<? extends AbstractHttpProxy>) Class.forName(config.getDefaultProxyClass());
+        if (Objects.isNull(proxyClass)) {
+            throw new ParamException("未找到动态代理类");
         }
         AbstractHttpProxy proxy = proxyClass.newInstance();
         proxy.setHttpFactoryBean(this);

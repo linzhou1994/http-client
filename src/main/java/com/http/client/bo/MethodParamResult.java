@@ -2,6 +2,7 @@ package com.http.client.bo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * http请求参数存储类
@@ -25,7 +26,7 @@ public class MethodParamResult {
     /**
      * 需要上传的文件
      */
-    private UploadFile uploadFile;
+    private List<UploadFile> uploadFiles = new ArrayList<>();
     /**
      * 指定url
      */
@@ -58,12 +59,18 @@ public class MethodParamResult {
         this.body = body;
     }
 
-    public UploadFile getUploadFile() {
-        return uploadFile;
+    public List<UploadFile> getUploadFiles() {
+        return uploadFiles;
+    }
+
+    public void setUploadFiles(List<UploadFile> uploadFiles) {
+        this.uploadFiles = uploadFiles;
     }
 
     public void setUploadFile(UploadFile uploadFile) {
-        this.uploadFile = uploadFile;
+        if (Objects.nonNull(uploadFile)) {
+            this.uploadFiles.add(uploadFile);
+        }
     }
 
     public List<NameValueParam> getNameValueParams() {

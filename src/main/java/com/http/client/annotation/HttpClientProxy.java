@@ -2,7 +2,7 @@ package com.http.client.annotation;
 
 
 import com.http.client.proxy.AbstractHttpProxy;
-import com.http.client.proxy.DefaultProxy;
+import com.http.client.proxy.OkHttpProxy;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,5 +23,5 @@ public @interface HttpClientProxy {
      *
      *  @return 动态代理类
      */
-    Class<?extends AbstractHttpProxy> value() default DefaultProxy.class;
+    Class<?extends AbstractHttpProxy> value() default OkHttpProxy.class;
 }

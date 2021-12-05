@@ -6,8 +6,10 @@ import com.http.client.annotation.HttpFile;
 import com.http.client.annotation.HttpParam;
 import com.http.client.bo.*;
 import com.http.client.context.HttpRequestContext;
+import com.http.client.enums.HttpRequestMethod;
 import com.http.client.exception.ParamException;
 import com.http.client.factorybean.HttpFactoryBean;
+import com.http.client.utils.UrlUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,9 +19,11 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * 动态代理基类
+ *
  * @author linzhou
  */
 @Data
@@ -39,12 +43,23 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         HttpRequestContext context = new HttpRequestContext(httpFactoryBean, proxy, method, args);
         //解析参数
         analysisMethodParam(context);
+        getHttpUrl(context);
         return doInvoke(context);
     }
 
-    public abstract Object doInvoke(HttpRequestContext context) throws Throwable;
+    protected abstract Object doInvoke(HttpRequestContext context) throws Throwable;
 
 
+    /**
+     * 是否是get方法
+     *
+     * @param context
+     * @return
+     */
+    protected boolean isGet(HttpRequestContext context) {
+        HttpRequestMethod httpRequestMethod = context.getHttpRequestMethod();
+        return HttpRequestMethod.POST != httpRequestMethod;
+    }
 
 
     /**
@@ -151,6 +166,12 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         return new NameValueParam(httpParam, value);
     }
 
+    /**
+     * 是否是基础类型
+     *
+     * @param o
+     * @return
+     */
     protected boolean isNameValuePair(Object o) {
         if (o instanceof Integer
                 || o instanceof String
@@ -164,6 +185,13 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
     }
 
 
+    /**
+     * 查找指定注解
+     * @param annotations
+     * @param clazz 要查找的注解类型
+     * @param <T>
+     * @return
+     */
     public <T extends Annotation> T findHttpAnnotation(Annotation[] annotations, Class<T> clazz) {
         for (Annotation annotation : annotations) {
             if (clazz.isInstance(annotation)) {
@@ -171,5 +199,28 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
             }
         }
         return null;
+    }
+
+
+    /**
+     * 获取请求地址
+     *
+     * @return
+     */
+    public String getHttpUrl(HttpRequestContext context) {
+        if (StringUtils.isBlank(context.getHttpUrl())) {
+            if (Objects.isNull(context.getParam()) || Objects.isNull(context.getHttpRequestMethod())) {
+                throw new ParamException("数据异常,methodParamResult or httpRequestMethod is null");
+            }
+            String baseUrl = context.getBaseUrl();
+            if (isGet(context)
+                    || context.isPostEntity()) {
+                context.setHttpUrl(UrlUtil.getParamUrl(baseUrl, context.getNameValueParams()));
+            } else {
+                context.setHttpUrl(baseUrl);
+            }
+        }
+
+        return context.getHttpUrl();
     }
 }

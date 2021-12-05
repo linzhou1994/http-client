@@ -5,6 +5,7 @@ import com.http.client.annotation.EnableHttpClient;
 import com.http.client.annotation.HttpClient;
 import com.http.client.annotation.HttpClientProxy;
 import com.http.client.factorybean.HttpFactoryBean;
+import com.http.client.proxy.AbstractHttpProxy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -59,6 +60,8 @@ public class HttpClientRegistrar implements ImportBeanDefinitionRegistrar, Resou
 
         Set<String> basePackages = getBasePackages(importingClassMetadata);
 
+        Class<? extends AbstractHttpProxy> defaultProxy = getDefaultProxyClass(importingClassMetadata);
+
         for (String basePackage : basePackages) {
             Set<BeanDefinition> candidateComponents = scanner
                     .findCandidateComponents(basePackage);
@@ -68,11 +71,20 @@ public class HttpClientRegistrar implements ImportBeanDefinitionRegistrar, Resou
                     AnnotationMetadata annotationMetadata = beanDefinition.getMetadata();
                     Assert.isTrue(annotationMetadata.isInterface(), "@HttpClient 只能作用在接口类型上");
 
-                    register(registry, annotationMetadata);
+                    register(registry, annotationMetadata,defaultProxy);
                 }
             }
         }
 
+    }
+
+    private Class<? extends AbstractHttpProxy> getDefaultProxyClass(AnnotationMetadata importingClassMetadata) {
+        Map<String, Object> attributes = importingClassMetadata
+                .getAnnotationAttributes(EnableHttpClient.class.getCanonicalName());
+        if (attributes != null) {
+            return (Class<? extends AbstractHttpProxy>) attributes.get("defaultProxy");
+        }
+        return null;
     }
 
     protected ClassPathScanningCandidateComponentProvider getScanner() {
@@ -113,7 +125,8 @@ public class HttpClientRegistrar implements ImportBeanDefinitionRegistrar, Resou
     }
 
     private void register(BeanDefinitionRegistry registry,
-                          AnnotationMetadata annotationMetadata) {
+                          AnnotationMetadata annotationMetadata,
+                          Class<? extends AbstractHttpProxy> defaultProxy) {
 
         Map<String, Object> httpClientAttributes = annotationMetadata
                 .getAnnotationAttributes(HttpClient.class.getCanonicalName());
@@ -130,6 +143,8 @@ public class HttpClientRegistrar implements ImportBeanDefinitionRegistrar, Resou
         definition.addPropertyValue("type", className);
         if (Objects.nonNull(httpClientProxyAttributes)) {
             definition.addPropertyValue("proxyClass", httpClientProxyAttributes.get("value"));
+        }else {
+            definition.addPropertyValue("proxyClass", defaultProxy);
         }
         definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
 

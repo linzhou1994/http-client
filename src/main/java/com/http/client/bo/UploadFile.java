@@ -52,4 +52,8 @@ public class UploadFile {
     public void setParam(Map<String, String> param) {
         this.param = param;
     }
+
+    public String getName(){
+        return httpFile.value();
+    }
 }

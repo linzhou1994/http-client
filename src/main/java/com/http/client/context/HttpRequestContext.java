@@ -2,17 +2,21 @@ package com.http.client.context;
 
 
 import com.http.client.annotation.HttpClient;
-import com.http.client.annotation.HttpFile;
+import com.http.client.bo.HttpHeader;
 import com.http.client.bo.MethodParamResult;
+import com.http.client.bo.NameValueParam;
+import com.http.client.bo.UploadFile;
 import com.http.client.enums.HttpRequestMethod;
-import com.http.client.exception.ParamException;
 import com.http.client.factorybean.HttpFactoryBean;
 import com.http.client.utils.UrlUtil;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -63,30 +67,8 @@ public class HttpRequestContext {
         this.httpRequestMethod = getHttpRequestMethod();
     }
 
-    /**
-     * 获取请求地址
-     *
-     * @return
-     */
-    public String getHttpUrl() {
-        if (StringUtils.isBlank(httpUrl)) {
-            if (Objects.isNull(param) || Objects.isNull(httpRequestMethod)) {
-                throw new ParamException("数据异常,methodParamResult or httpRequestMethod is null");
-            }
-            String baseUrl = getBaseUrl();
-            if (httpRequestMethod == HttpRequestMethod.GET
-                    || httpRequestMethod == HttpRequestMethod.NULL
-                    || isPostEntity()) {
-                httpUrl = UrlUtil.getParamUrl(baseUrl, param.getNameValueParams());
-            } else {
-                httpUrl = baseUrl;
-            }
-        }
 
-        return httpUrl;
-    }
-
-    private String getBaseUrl() {
+    public String getBaseUrl() {
         if (param.getHttpUrl() != null) {
             return param.getHttpUrl().getUrl();
         }
@@ -123,7 +105,7 @@ public class HttpRequestContext {
             return false;
         }
 
-        return StringUtils.isNotBlank(param.getBody()) || Objects.nonNull(param.getUploadFile());
+        return StringUtils.isNotBlank(param.getBody()) || CollectionUtils.isNotEmpty(param.getUploadFiles());
     }
 
     /**
@@ -149,4 +131,32 @@ public class HttpRequestContext {
     }
 
 
+    public List<NameValueParam> getNameValueParams() {
+
+        if (Objects.nonNull(param)){
+            return param.getNameValueParams();
+        }
+        return Collections.emptyList();
+    }
+
+    public List<UploadFile> getUploadFiles(){
+        if (Objects.nonNull(param)){
+            return param.getUploadFiles();
+        }
+        return Collections.emptyList();
+    }
+
+    public HttpHeader getHttpHeader(){
+        if (Objects.nonNull(param)){
+            return param.getHttpHeader();
+        }
+        return null;
+    }
+
+    public String getBody(){
+        if (Objects.nonNull(param)){
+            return param.getBody();
+        }
+        return null;
+    }
 }
