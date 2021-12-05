@@ -1,11 +1,13 @@
 package com.http.client.factorybean;
 
+import com.http.client.config.HttpClientConfig;
 import com.http.client.enums.HttpRequestMethod;
 import com.http.client.exception.ParamException;
 import com.http.client.proxy.AbstractHttpProxy;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -27,6 +29,10 @@ public class HttpFactoryBean implements FactoryBean<Object>, InitializingBean, A
      */
     private String url;
     /**
+     * 类上的请求跟路径
+     */
+    private String basePath;
+    /**
      * 是否使用方法名称作为路径
      */
     private boolean pathMethodName;
@@ -45,6 +51,8 @@ public class HttpFactoryBean implements FactoryBean<Object>, InitializingBean, A
         }
         AbstractHttpProxy proxy = proxyClass.newInstance();
         proxy.setHttpFactoryBean(this);
+        HttpClientConfig config = applicationContext.getBean(HttpClientConfig.class);
+        proxy.setConfig(config);
         return proxy.newProxyInstance();
     }
 
@@ -108,5 +116,13 @@ public class HttpFactoryBean implements FactoryBean<Object>, InitializingBean, A
 
     public void setProxyClass(Class<? extends AbstractHttpProxy> proxyClass) {
         this.proxyClass = proxyClass;
+    }
+
+    public String getBasePath() {
+        return basePath;
+    }
+
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
     }
 }

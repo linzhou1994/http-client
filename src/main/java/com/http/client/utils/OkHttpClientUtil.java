@@ -56,7 +56,7 @@ public class OkHttpClientUtil {
         Headers.Builder builder = getHeadersBuilder(context);
 
         final Request request = new Request.Builder()
-                .url(context.getBaseUrl())
+                .url(context.getHttpUrl())
                 .headers(builder.build())
                 .build();
         Call call = mOkHttpClient.newCall(request);

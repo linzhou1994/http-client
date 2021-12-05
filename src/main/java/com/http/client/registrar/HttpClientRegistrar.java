@@ -141,6 +141,7 @@ public class HttpClientRegistrar implements ImportBeanDefinitionRegistrar, Resou
         definition.addPropertyValue("method", httpClientAttributes.get("method"));
         definition.addPropertyValue("pathMethodName", httpClientAttributes.get("pathMethodName"));
         definition.addPropertyValue("type", className);
+        definition.addPropertyValue("basePath", httpClientAttributes.get("path"));
         if (Objects.nonNull(httpClientProxyAttributes)) {
             definition.addPropertyValue("proxyClass", httpClientProxyAttributes.get("value"));
         }else {

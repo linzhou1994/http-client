@@ -68,7 +68,7 @@ public class HttpRequestContext {
     }
 
 
-    public String getBaseUrl() {
+    public String getBaseUrl(String defaultBaseUrl) {
         if (param.getHttpUrl() != null) {
             return param.getHttpUrl().getUrl();
         }
@@ -78,10 +78,19 @@ public class HttpRequestContext {
             url = httpFactoryBean.getUrl();
         }
         if (StringUtils.isBlank(url)) {
-            throw new IllegalArgumentException("url:error,url is blank");
+            if (StringUtils.isNotBlank(defaultBaseUrl)) {
+                url = defaultBaseUrl;
+            }else {
+                throw new IllegalArgumentException("url:error,url is blank");
+            }
         }
         if (!url.contains("://")) {
             url = "https://" + url;
+        }
+
+        //拼接类上的根路径
+        if (StringUtils.isNotBlank(httpFactoryBean.getBasePath())){
+            url =  UrlUtil.splicingUrl(url, httpFactoryBean.getBasePath());
         }
         //如果方法没有注解,则取方法名称作为路径
         String path = "";

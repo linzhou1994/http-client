@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.http.client.annotation.HttpFile;
 import com.http.client.annotation.HttpParam;
 import com.http.client.bo.*;
+import com.http.client.config.HttpClientConfig;
 import com.http.client.context.HttpRequestContext;
 import com.http.client.enums.HttpRequestMethod;
 import com.http.client.exception.ParamException;
@@ -30,6 +31,7 @@ import java.util.Objects;
 public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler {
 
     private HttpFactoryBean httpFactoryBean;
+    private HttpClientConfig config;
 
     @Override
     public <T> T newProxyInstance() {
@@ -212,7 +214,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
             if (Objects.isNull(context.getParam()) || Objects.isNull(context.getHttpRequestMethod())) {
                 throw new ParamException("数据异常,methodParamResult or httpRequestMethod is null");
             }
-            String baseUrl = context.getBaseUrl();
+            String baseUrl = context.getBaseUrl(config.getBaseUrl());
             if (isGet(context)
                     || context.isPostEntity()) {
                 context.setHttpUrl(UrlUtil.getParamUrl(baseUrl, context.getNameValueParams()));

@@ -37,7 +37,7 @@ public @interface HttpClient {
      *
      * @return
      */
-    boolean pathMethodName() default true;
+    boolean pathMethodName() default false;
 
     /**
      * 请求类型
