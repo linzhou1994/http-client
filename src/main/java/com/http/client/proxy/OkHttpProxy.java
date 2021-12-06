@@ -8,6 +8,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -33,11 +34,10 @@ public class OkHttpProxy extends AbstractHttpProxy {
     private Object getReturnObject(Response response, Class<?> returnType) throws IOException {
 
         if (returnType == MultipartFile.class) {
-            //如果是文件下载
-            byte[] bytes = response.body().bytes();
-            InputStream inputStream = new ByteArrayInputStream(bytes);
-            //创建文件
-            return new MockMultipartFile("httpClientDownFile", inputStream);
+            return OkHttpClientUtil.getMockMultipartFile(response);
+        }
+        if (returnType == File.class){
+            return OkHttpClientUtil.downFile(response);
         }
 
         String result = response.body().string();

@@ -20,13 +20,11 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.net.FileNameMap;
-import java.net.URLConnection;
+import java.net.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class OkHttpClientUtil {
 
@@ -121,12 +119,18 @@ public class OkHttpClientUtil {
         return mOkHttpClient.newCall(request).execute();
     }
 
-    public static boolean downFile(Response response, String downPath) {
+    public static File downFile(Response response) {
+        return downFile(response, "httpClient/");
+    }
+
+    public static File downFile(Response response, String downPath) {
+        String fileName = getFilePath(response, downPath);
         try {
             InputStream is;
             is = response.body().byteStream();
             FileOutputStream fos = null;
-            fos = new FileOutputStream(downPath);
+
+            fos = new FileOutputStream(fileName);
             int len;
             byte[] bytes = new byte[4096];
             while ((len = is.read(bytes)) != -1) {
@@ -135,27 +139,83 @@ public class OkHttpClientUtil {
             fos.flush();
             is.close();
             fos.close();
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
-    public static MultipartFile downFile(String downUrl) {
-        try {
-
-            Request request = new Request.Builder().url(downUrl).build();
-            Response response = mOkHttpClient.newCall(request).execute();
-            //如果是文件下载
-            byte[] bytes = response.body().bytes();
-            InputStream inputStream = new ByteArrayInputStream(bytes);
-            //创建文件
-            return new MockMultipartFile("httpClientDownFile", inputStream);
         } catch (Exception ex) {
             return null;
         }
+        return new File(fileName);
     }
 
+    /**
+     * 获取文件
+     *
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    public static MockMultipartFile getMockMultipartFile(Response response) throws IOException {
+        //如果是文件下载
+        byte[] bytes = response.body().bytes();
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        //创建文件
+        return new MockMultipartFile(getFileName(response), inputStream);
+    }
+
+    private static String getFilePath(Response response, String path) {
+        if (StringUtils.isBlank(path)) {
+            return getFileName(response);
+        }
+        StringBuilder stringBuilder = new StringBuilder(path);
+        if (path.lastIndexOf("/") != path.length()) {
+            stringBuilder.append("/");
+        }
+        return stringBuilder.append(getFileName(response)).toString();
+    }
+
+    /**
+     * 获取文件名称
+     */
+    private static String getFileName(Response response) {
+        //从header中获取文件名称
+        return Optional.ofNullable(getHeaderFileName(response))
+                //如果header中没有文件名称,则从url上获取
+                .orElse(getUrlFileName(response));
+    }
+
+    /**
+     * 解析文件头
+     * Content-Disposition:attachment;filename=FileName.txt
+     * Content-Disposition: attachment; filename*="UTF-8''%E6%9B%BF%E6%8D%A2%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf"
+     */
+    private static String getHeaderFileName(Response response) {
+        String dispositionHeader = response.header("Content-Disposition");
+        if (StringUtils.isNotBlank(dispositionHeader)) {
+            dispositionHeader.replace("attachment;filename=", "");
+            dispositionHeader.replace("filename*=utf-8", "");
+            String[] strings = dispositionHeader.split("; ");
+            if (strings.length > 1) {
+                dispositionHeader = strings[1].replace("filename=", "");
+                dispositionHeader = dispositionHeader.replace("\"", "");
+                return dispositionHeader;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 通过url获取文件名称
+     *
+     * @param response
+     * @return
+     */
+    public static String getUrlFileName(Response response) {
+        return Optional.ofNullable(response)
+                .map(Response::request)
+                .map(Request::url)
+                .map(URL::toString)
+                .map(o -> o.substring(o.lastIndexOf("/") + 1))
+                .orElse("HttpClientDownFile");
+
+    }
 
     private static Request buildMultipartFormRequest(String url, List<UploadFile> uploadFiles, List<NameValueParam> params) throws IOException {
         params = validateParam(params);
