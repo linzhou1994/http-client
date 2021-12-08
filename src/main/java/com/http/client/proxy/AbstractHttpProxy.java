@@ -274,7 +274,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
 
     protected List<HttpClientHandler> getHttpClientHandlerList() {
         if (httpClientHandlerList == null) {
-            synchronized (this) {
+            synchronized (AbstractHttpProxy.class) {
                 if (httpClientHandlerList == null) {
                     httpClientHandlerList = new ArrayList<>();
                     Map<String, HttpClientHandler> httpClientHandlerMap = getHttpClientHandlerMap();
