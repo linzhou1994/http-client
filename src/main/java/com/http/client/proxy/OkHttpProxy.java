@@ -1,24 +1,20 @@
 package com.http.client.proxy;
 
-import com.alibaba.fastjson.JSON;
+import com.http.client.bo.HttpClientResponse;
+import com.http.client.bo.HttpHeader;
 import com.http.client.context.HttpRequestContext;
 import com.http.client.utils.OkHttpClientUtil;
 import com.squareup.okhttp.Response;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 使用OkHttp的动态代理
  */
 public class OkHttpProxy extends AbstractHttpProxy {
     @Override
-    protected Object doInvoke(HttpRequestContext context) throws Throwable {
+    protected HttpClientResponse doInvoke(HttpRequestContext context) throws Throwable {
 
         Response response;
         if (isGet(context)) {
@@ -26,40 +22,20 @@ public class OkHttpProxy extends AbstractHttpProxy {
         } else {
             response = OkHttpClientUtil.postResponse(context);
         }
+        return HttpClientResponse.builder().contentType(response.body().contentType())
+                .bytes(response.body().bytes())
+                .httpHeader(getHeaders(response))
+                .build();
+    }
 
-        return getReturnObject(response, context.getMethod().getReturnType());
+    public HttpHeader getHeaders(Response response){
+        Map<String, List<String>> stringListMap = response.headers().toMultimap();
+        HttpHeader httpHeader = new HttpHeader();
+        for (Map.Entry<String, List<String>> entry : stringListMap.entrySet()) {
+            httpHeader.getHeader(entry.getKey(),entry.getValue().get(0));
+        }
+        return httpHeader;
     }
 
 
-    private Object getReturnObject(Response response, Class<?> returnType) throws IOException {
-
-        if (returnType == MultipartFile.class) {
-            return OkHttpClientUtil.getMockMultipartFile(response);
-        }
-        if (returnType == File.class){
-            return OkHttpClientUtil.downFile(response);
-        }
-
-        String result = response.body().string();
-        if (returnType == String.class) {
-            return result;
-        }
-        if (returnType == Integer.class) {
-            return Integer.parseInt(result);
-        }
-        if (returnType == Double.class) {
-            return Double.parseDouble(result);
-        }
-        if (returnType == Float.class) {
-            return Float.parseFloat(result);
-        }
-        if (returnType == Long.class) {
-            return Long.parseLong(result);
-        }
-        if (returnType == BigDecimal.class) {
-            return new BigDecimal(result);
-        }
-
-        return JSON.parseObject(result, returnType);
-    }
 }

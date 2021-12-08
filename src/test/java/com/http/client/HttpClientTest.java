@@ -1,12 +1,13 @@
 package com.http.client;
 
 
+import com.http.client.bo.HttpHeader;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Log4j2
-public class HttpClientTest extends BaseTest{
+public class HttpClientTest extends BaseTest {
 
     @Autowired
     private HttpTestClient httpTestClient;

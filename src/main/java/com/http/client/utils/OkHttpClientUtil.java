@@ -65,8 +65,10 @@ public class OkHttpClientUtil {
         Headers.Builder builder = new Headers.Builder();
         HttpHeader httpHeader = context.getHttpHeader();
         if (httpHeader != null && !httpHeader.isEmpty()) {
-            for (Map.Entry<String, String> header : httpHeader.getHeaders().entrySet()) {
-                builder.add(header.getKey(), header.getValue());
+            for (Map.Entry<String, List<String>> header : httpHeader.getHeaders().entrySet()) {
+                for (String value : header.getValue()) {
+                    builder.add(header.getKey(), value);
+                }
             }
         }
         return builder;
@@ -235,7 +237,7 @@ public class OkHttpClientUtil {
                 fileBody = RequestBody.create(MediaType.parse(guessMimeType(fileName)), uploadFile.getFile().getBytes());
                 //根据文件名设置contentType
                 builder.addPart(Headers.of("Content-Disposition",
-                        "form-data; name=\"" + uploadFile.getName() + "\"; filename=\"" + fileName + "\""),
+                                "form-data; name=\"" + uploadFile.getName() + "\"; filename=\"" + fileName + "\""),
                         fileBody);
             }
         }

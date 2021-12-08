@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.http.client.annotation.HttpFile;
 import com.http.client.annotation.HttpParam;
 import com.http.client.bo.FileParam;
+import com.http.client.bo.HttpClientResponse;
 import com.http.client.bo.HttpHeader;
 import com.http.client.bo.HttpUrl;
 import com.http.client.bo.MethodParamResult;
@@ -16,6 +17,7 @@ import com.http.client.enums.HttpRequestMethod;
 import com.http.client.exception.ParamException;
 import com.http.client.factorybean.HttpFactoryBean;
 import com.http.client.handler.HttpClientHandler;
+import com.http.client.utils.FileUtil;
 import com.http.client.utils.UrlUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +26,8 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -64,13 +68,48 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         setHttpUrl(context);
         //执行httpBefore方法
         runHttpBefore(context);
-        Object rlt = doInvoke(context);
+        HttpClientResponse response = doInvoke(context);
+        response.setContext(context);
         //执行httpAfter方法处理返回数据
-        return runHttpAfter(context, rlt);
+        runHttpAfter(context, response);
+        return getReturnObject(context,response);
+    }
+
+    private Object getReturnObject(HttpRequestContext context, HttpClientResponse response) throws IOException {
+        Class<?> returnType = context.getMethod().getReturnType();
+
+        if (returnType == MultipartFile.class) {
+            return FileUtil.getMockMultipartFile(response);
+        }
+        if (returnType == File.class){
+            return FileUtil.downFile(response);
+        }
+
+        String result = response.string();
+        if (returnType == String.class) {
+            return result;
+        }
+        if (returnType == Integer.class) {
+            return Integer.parseInt(result);
+        }
+        if (returnType == Double.class) {
+            return Double.parseDouble(result);
+        }
+        if (returnType == Float.class) {
+            return Float.parseFloat(result);
+        }
+        if (returnType == Long.class) {
+            return Long.parseLong(result);
+        }
+        if (returnType == BigDecimal.class) {
+            return new BigDecimal(result);
+        }
+
+        return JSON.parseObject(result, returnType);
     }
 
 
-    protected abstract Object doInvoke(HttpRequestContext context) throws Throwable;
+    protected abstract HttpClientResponse doInvoke(HttpRequestContext context) throws Throwable;
 
 
     /**
@@ -265,11 +304,10 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
      *
      * @param context
      */
-    private Object runHttpAfter(HttpRequestContext context, Object rlt) {
+    private void runHttpAfter(HttpRequestContext context, HttpClientResponse response) throws Exception {
         for (HttpClientHandler httpClientHandler : getHttpClientHandlerList()) {
-            rlt = httpClientHandler.httpAfter(context, rlt);
+           httpClientHandler.httpAfter(context, response);
         }
-        return rlt;
     }
 
     protected List<HttpClientHandler> getHttpClientHandlerList() {

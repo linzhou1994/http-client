@@ -1,9 +1,12 @@
 package com.http.client;
 
+import com.http.client.bo.HttpClientResponse;
 import com.http.client.context.HttpRequestContext;
 import com.http.client.handler.HttpClientHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 /**
  * @author linzhou
@@ -20,8 +23,7 @@ public class HttpClientHandlerImpl implements HttpClientHandler {
     }
 
     @Override
-    public Object httpAfter(HttpRequestContext context, Object rlt) {
-        log.info("HttpClientHandlerImpl:httpAfter" + rlt.toString());
-        return rlt;
+    public void httpAfter(HttpRequestContext context, HttpClientResponse response) throws Exception {
+        log.info("HttpClientHandlerImpl:httpAfter" + response.string());
     }
 }
