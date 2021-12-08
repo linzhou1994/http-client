@@ -4,15 +4,24 @@ package com.http.client.proxy;
 import com.alibaba.fastjson.JSON;
 import com.http.client.annotation.HttpFile;
 import com.http.client.annotation.HttpParam;
-import com.http.client.bo.*;
+import com.http.client.bo.FileParam;
+import com.http.client.bo.HttpHeader;
+import com.http.client.bo.HttpUrl;
+import com.http.client.bo.MethodParamResult;
+import com.http.client.bo.NameValueParam;
+import com.http.client.bo.UploadFile;
 import com.http.client.config.HttpClientConfig;
 import com.http.client.context.HttpRequestContext;
 import com.http.client.enums.HttpRequestMethod;
 import com.http.client.exception.ParamException;
 import com.http.client.factorybean.HttpFactoryBean;
+import com.http.client.handler.HttpClientHandler;
 import com.http.client.utils.UrlUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.annotation.Annotation;
@@ -20,6 +29,10 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -32,6 +45,8 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
 
     private HttpFactoryBean httpFactoryBean;
     private HttpClientConfig config;
+    private ApplicationContext applicationContext;
+    private List<HttpClientHandler> httpClientHandlerList;
 
     @Override
     public <T> T newProxyInstance() {
@@ -45,9 +60,15 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         HttpRequestContext context = new HttpRequestContext(httpFactoryBean, proxy, method, args);
         //解析参数
         analysisMethodParam(context);
-        getHttpUrl(context);
-        return doInvoke(context);
+        //设置httpUrl
+        setHttpUrl(context);
+        //执行httpBefore方法
+        runHttpBefore(context);
+        Object rlt = doInvoke(context);
+        //执行httpAfter方法处理返回数据
+        return runHttpAfter(context, rlt);
     }
+
 
     protected abstract Object doInvoke(HttpRequestContext context) throws Throwable;
 
@@ -189,8 +210,9 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
 
     /**
      * 查找指定注解
+     *
      * @param annotations
-     * @param clazz 要查找的注解类型
+     * @param clazz       要查找的注解类型
      * @param <T>
      * @return
      */
@@ -209,7 +231,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
      *
      * @return
      */
-    public String getHttpUrl(HttpRequestContext context) {
+    public String setHttpUrl(HttpRequestContext context) {
         if (StringUtils.isBlank(context.getHttpUrl())) {
             if (Objects.isNull(context.getParam()) || Objects.isNull(context.getHttpRequestMethod())) {
                 throw new ParamException("数据异常,methodParamResult or httpRequestMethod is null");
@@ -224,5 +246,55 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         }
 
         return context.getHttpUrl();
+    }
+
+
+    /**
+     * 执行httpBefore方法
+     *
+     * @param context
+     */
+    private void runHttpBefore(HttpRequestContext context) {
+        for (HttpClientHandler httpClientHandler : getHttpClientHandlerList()) {
+            httpClientHandler.httpBefore(context);
+        }
+    }
+
+    /**
+     * 执行httpAfter方法
+     *
+     * @param context
+     */
+    private Object runHttpAfter(HttpRequestContext context, Object rlt) {
+        for (HttpClientHandler httpClientHandler : getHttpClientHandlerList()) {
+            rlt = httpClientHandler.httpAfter(context, rlt);
+        }
+        return rlt;
+    }
+
+    protected List<HttpClientHandler> getHttpClientHandlerList() {
+        if (httpClientHandlerList == null) {
+            synchronized (this) {
+                if (httpClientHandlerList == null) {
+                    httpClientHandlerList = new ArrayList<>();
+                    Map<String, HttpClientHandler> httpClientHandlerMap = getHttpClientHandlerMap();
+                    httpClientHandlerList.addAll(httpClientHandlerMap.values());
+                    httpClientHandlerList.sort(Comparator.comparingInt(AbstractHttpProxy::getOrder));
+                }
+            }
+        }
+        return httpClientHandlerList;
+    }
+
+    protected Map<String, HttpClientHandler> getHttpClientHandlerMap() {
+        return applicationContext.getBeansOfType(HttpClientHandler.class);
+    }
+
+    public static int getOrder(Object o) {
+        Order order = AnnotationUtils.findAnnotation(o.getClass(), Order.class);
+        if (order != null) {
+            return order.value();
+        }
+        return 0;
     }
 }

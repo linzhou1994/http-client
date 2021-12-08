@@ -17,8 +17,8 @@ public class HttpClientTest extends BaseTest{
     public void test1(){
         String rlt = httpTestClient.getTest();
         log.info("rlt1:"+rlt);
-        rlt = httpTestClient2.getTest();
-        log.info("rlt2:"+rlt);
+//        rlt = httpTestClient2.getTest();
+//        log.info("rlt2:"+rlt);
     }
 
 }

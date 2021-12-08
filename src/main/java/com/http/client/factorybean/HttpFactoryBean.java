@@ -53,6 +53,7 @@ public class HttpFactoryBean implements FactoryBean<Object>, InitializingBean, A
         proxy.setHttpFactoryBean(this);
         HttpClientConfig config = applicationContext.getBean(HttpClientConfig.class);
         proxy.setConfig(config);
+        proxy.setApplicationContext(applicationContext);
         return proxy.newProxyInstance();
     }
 
