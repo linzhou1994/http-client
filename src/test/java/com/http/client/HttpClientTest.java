@@ -17,7 +17,7 @@ public class HttpClientTest extends BaseTest {
     public void test1() {
         LoginParam p = new LoginParam();
         p.setPassword("123");
-        p.setPhone("134");
+        p.setPhone("1347");
 
         String rlt = httpTestClient.login(p);
         log.info("rlt1:" + rlt);

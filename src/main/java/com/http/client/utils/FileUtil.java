@@ -7,6 +7,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +45,20 @@ public class FileUtil {
     }
 
     /**
+     * 文件类型转换
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public static MockMultipartFile getMockMultipartFile(File file) throws IOException {
+        //如果是文件下载
+        InputStream is = new FileInputStream(file);
+        //创建文件
+        return new MockMultipartFile(file.getName(), is);
+    }
+
+    /**
      * 获取文件
      *
      * @param response
@@ -57,6 +72,7 @@ public class FileUtil {
         //创建文件
         return new MockMultipartFile(getFileName(response), inputStream);
     }
+
     /**
      * 获取文件名称
      */
@@ -77,6 +93,7 @@ public class FileUtil {
         }
         return stringBuilder.append(getFileName(response)).toString();
     }
+
     /**
      * 解析文件头
      * Content-Disposition:attachment;filename=FileName.txt

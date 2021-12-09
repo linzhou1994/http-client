@@ -71,12 +71,12 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         HttpClientResponse response = doInvoke(context);
         response.setContext(context);
         //执行httpAfter方法处理返回数据
-        runHttpAfter(context, response);
-        return getReturnObject(context,response);
+        runHttpAfter( response);
+        return getReturnObject(response);
     }
 
-    private Object getReturnObject(HttpRequestContext context, HttpClientResponse response) throws IOException {
-        Class<?> returnType = context.getMethod().getReturnType();
+    private Object getReturnObject(HttpClientResponse response) throws IOException {
+        Class<?> returnType = response.getContext().getMethod().getReturnType();
 
         if (returnType == MultipartFile.class) {
             return FileUtil.getMockMultipartFile(response);
@@ -130,7 +130,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
      * @param context
      * @return
      */
-    protected void analysisMethodParam(HttpRequestContext context) {
+    protected void analysisMethodParam(HttpRequestContext context) throws IOException {
         Object[] args = context.getArgs();
         Annotation[][] parameterAnnotations = context.getParameterAnnotations();
         MethodParamResult result = new MethodParamResult();
@@ -194,7 +194,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
      * @param httpFile
      * @return
      */
-    private UploadFile getUploadFile(int i, Object arg, HttpFile httpFile) {
+    private UploadFile getUploadFile(int i, Object arg, HttpFile httpFile) throws IOException {
         UploadFile uploadFile;
         //保存需要上传的文件信息
         if (arg instanceof MultipartFile) {
@@ -202,7 +202,9 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         } else if (arg instanceof FileParam) {
             FileParam fileParam = (FileParam) arg;
             uploadFile = new UploadFile(httpFile, fileParam.getFile(), fileParam.getParam());
-        } else {
+        }else if (arg instanceof File){
+            uploadFile = new UploadFile(httpFile, FileUtil.getMockMultipartFile((File) arg));
+        }else {
             throw new ParamException("第" + i + "个参数格式错误,上传文件应为MultipartFile类型,当前类型:" + arg.getClass().getName());
         }
         return uploadFile;
@@ -302,11 +304,11 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
     /**
      * 执行httpAfter方法
      *
-     * @param context
+     * @param response
      */
-    private void runHttpAfter(HttpRequestContext context, HttpClientResponse response) throws Exception {
+    private void runHttpAfter(HttpClientResponse response) throws Exception {
         for (HttpClientHandler httpClientHandler : getHttpClientHandlerList()) {
-           httpClientHandler.httpAfter(context, response);
+           httpClientHandler.httpAfter(response);
         }
     }
 

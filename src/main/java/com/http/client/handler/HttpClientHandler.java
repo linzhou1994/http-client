@@ -3,8 +3,6 @@ package com.http.client.handler;
 import com.http.client.bo.HttpClientResponse;
 import com.http.client.context.HttpRequestContext;
 
-import java.io.IOException;
-
 /**
  * @author linzhou
  * @ClassName HttpClientHandler.java
@@ -22,9 +20,9 @@ public interface HttpClientHandler {
 
     /**
      * http请求之后调用
-     * @param context http请求参数
+     *
      * @param response 返回数据
      * @return
      */
-    void httpAfter(HttpRequestContext context, HttpClientResponse response) throws Exception;
+    void httpAfter(HttpClientResponse response) throws Exception;
 }
