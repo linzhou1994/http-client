@@ -17,7 +17,6 @@ import com.squareup.okhttp.Response;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.*;
@@ -77,49 +76,26 @@ public class OkHttpClientUtil {
     /**
      * 同步的Post请求
      *
-     * @param url
-     * @param params post的参数
+     * @param context post的参数
      * @return
      */
-    private static Response postResponse(String url, String body, List<NameValueParam> params) throws IOException {
-        Request request = buildPostRequest(url, body, params);
-        return mOkHttpClient.newCall(request).execute();
-    }
-
     public static Response postResponse(HttpRequestContext context) throws IOException {
-        List<UploadFile> uploadFiles = context.getUploadFiles();
-        String httpUrl = context.getHttpUrl();
-        List<NameValueParam> nameValueParams = context.getNameValueParams();
-        if (CollectionUtils.isEmpty(uploadFiles)) {
-            return post(httpUrl, context.getBody(), nameValueParams);
-        }
 
-        return post(httpUrl, uploadFiles, nameValueParams);
+        return post(context);
     }
 
 
     /**
      * 同步的Post请求
      *
-     * @param url
-     * @param params post的参数
-     * @return 字符串
-     */
-    private static Response post(String url, String body, List<NameValueParam> params) throws IOException {
-        return postResponse(url, body, params);
-    }
-
-
-    /**
-     * 同步基于post的文件上传
-     *
-     * @param params
+     * @param context post的参数
      * @return
      */
-    private static Response post(String url, List<UploadFile> uploadFiles, List<NameValueParam> params) throws IOException {
-        Request request = buildMultipartFormRequest(url, uploadFiles, params);
+    private static Response post(HttpRequestContext context) throws IOException {
+        Request request = buildPostRequest(context);
         return mOkHttpClient.newCall(request).execute();
     }
+
 
     public static File downFile(Response response) {
         return downFile(response, "httpClient/");
@@ -219,12 +195,42 @@ public class OkHttpClientUtil {
 
     }
 
-    private static Request buildMultipartFormRequest(String url, List<UploadFile> uploadFiles, List<NameValueParam> params) throws IOException {
-        params = validateParam(params);
+    private static String guessMimeType(String path) {
+        FileNameMap fileNameMap = URLConnection.getFileNameMap();
+        String contentTypeFor = fileNameMap.getContentTypeFor(path);
+        if (contentTypeFor == null) {
+            contentTypeFor = "application/octet-stream";
+        }
+        return contentTypeFor;
+    }
 
+
+    private static Request buildPostRequest(HttpRequestContext context) throws IOException {
+
+        String body = context.getBody();
+        Request.Builder requestBuilder = getRequestBuilder(context);
+
+        RequestBody requestBody;
+        if (CollectionUtils.isNotEmpty(context.getUploadFiles())) {
+            requestBody = getMultipartBuilderBody(context);
+        } else if (StringUtils.isNotBlank(body)) {
+            requestBody = getRequestBody(body);
+
+        } else {
+            requestBody = GetFormEncodingBody(context);
+        }
+        requestBuilder.post(requestBody);
+
+        return requestBuilder.build();
+    }
+
+    private static RequestBody getMultipartBuilderBody(HttpRequestContext context) throws IOException {
+        RequestBody requestBody;
         MultipartBuilder builder = new MultipartBuilder()
                 .type(MultipartBuilder.FORM);
 
+        List<UploadFile> uploadFiles = context.getUploadFiles();
+        List<NameValueParam> params = context.getNameValueParams();
         for (NameValueParam param : params) {
             builder.addPart(Headers.of("Content-Disposition", "form-data; name=\"" + param.getName() + "\""),
                     RequestBody.create(null, param.getValue()));
@@ -242,54 +248,39 @@ public class OkHttpClientUtil {
             }
         }
 
-        RequestBody requestBody = builder.build();
-        return new Request.Builder()
-                .url(url)
-                .post(requestBody)
-                .build();
+        requestBody = builder.build();
+        return requestBody;
     }
 
-    private static String guessMimeType(String path) {
-        FileNameMap fileNameMap = URLConnection.getFileNameMap();
-        String contentTypeFor = fileNameMap.getContentTypeFor(path);
-        if (contentTypeFor == null) {
-            contentTypeFor = "application/octet-stream";
-        }
-        return contentTypeFor;
-    }
-
-
-    private static List<NameValueParam> validateParam(List<NameValueParam> params) {
-        if (params == null) {
-            return Collections.emptyList();
-        } else {
-            return params;
-        }
-    }
-
-    private static Request buildPostRequest(String url, String body, List<NameValueParam> params) {
-        if (StringUtils.isNotBlank(body)) {
-            //修改样式
-            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-            //修改样式和上传json参数
-            RequestBody requestBody = RequestBody.create(JSON, body);
-            return new Request.Builder()
-                    .url(url)
-                    .post(requestBody)
-                    .build();
-        }
-
+    private static RequestBody GetFormEncodingBody(HttpRequestContext context) {
+        RequestBody requestBody;
+        List<NameValueParam> params = context.getNameValueParams();
         FormEncodingBuilder builder = new FormEncodingBuilder();
-        if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(params)) {
+        if (CollectionUtils.isNotEmpty(params)) {
             for (NameValueParam param : params) {
                 builder.add(param.getName(), param.getValue());
             }
         }
-        RequestBody requestBody = builder.build();
-        return new Request.Builder()
+        requestBody = builder.build();
+        return requestBody;
+    }
+
+    private static RequestBody getRequestBody(String body) {
+        RequestBody requestBody;
+        //修改样式
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        //修改样式和上传json参数
+        requestBody = RequestBody.create(JSON, body);
+        return requestBody;
+    }
+
+    private static Request.Builder getRequestBuilder(HttpRequestContext context) {
+        String url = context.getHttpUrl();
+        Headers.Builder headersBuilder = getHeadersBuilder(context);
+        Request.Builder requestBuilder = new Request.Builder()
                 .url(url)
-                .post(requestBody)
-                .build();
+                .headers(headersBuilder.build());
+        return requestBuilder;
     }
 
 

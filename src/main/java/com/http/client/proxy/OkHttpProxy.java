@@ -32,7 +32,7 @@ public class OkHttpProxy extends AbstractHttpProxy {
         Map<String, List<String>> stringListMap = response.headers().toMultimap();
         HttpHeader httpHeader = new HttpHeader();
         for (Map.Entry<String, List<String>> entry : stringListMap.entrySet()) {
-            httpHeader.getHeader(entry.getKey(),entry.getValue().get(0));
+            httpHeader.addHeader(entry.getKey(),entry.getValue());
         }
         return httpHeader;
     }
