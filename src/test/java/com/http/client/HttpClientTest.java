@@ -16,11 +16,13 @@ public class HttpClientTest extends BaseTest {
     @Test
     public void test1() {
         LoginParam p = new LoginParam();
-        p.setPassword("123");
-        p.setPhone("1347");
+        p.setPassword("gesxeBc5zaV6ScGC0FGlqA==");
+        p.setPhone("13457");
+        while (true){
+            String rlt = httpTestClient.login(p);
+            log.info("rlt1:" + rlt);
+        }
 
-        String rlt = httpTestClient.login(p);
-        log.info("rlt1:" + rlt);
 //        rlt = httpTestClient2.getTest();
 //        log.info("rlt2:"+rlt);
     }
