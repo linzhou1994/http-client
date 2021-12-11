@@ -1,5 +1,11 @@
 # http-client
 
+## 一个可以把http请求像写方法一样简单的项目
+    1.支持普通的get、post请求
+    2.可以自定义请求头
+    3.默认使用okhttp实现,支持自定义动态代理类
+    4.支持文件上传、下载
+
 ## client写法
 ### HttpTestClient (定义http请求)
     @HttpClient(url = "http://127.0.0.1:8080/login",pathMethodName = false)
@@ -68,12 +74,12 @@
     File downloadFile(HttpUrl httpUrl, @HttpParam("param") String param);
 
     }
-## client的注入
+## client 使用
+### client的注入
     @Autowired
     private HttpTestClient httpTestClient;
     @Autowired
     private DownloadFileClient httpDownloadClient;
-## client 使用
 ### post 请求
     @Test
     public void postTest() {
