@@ -11,8 +11,21 @@ import java.io.File;
 @HttpClient(method = HttpRequestMethod.POST)
 public interface DownloadFileClient {
 
-    MultipartFile downloadMultipartFile(HttpUrl httpUrl,@HttpParam("param")String param);
+    /**
+     * 下载文件
+     *
+     * @param httpUrl
+     * @param param
+     * @return
+     */
+    MultipartFile downloadMultipartFile(HttpUrl httpUrl, @HttpParam("param") String param);
 
-    File downloadFile(HttpUrl httpUrl,@HttpParam("param")String param);
+    /**
+     * 下载文件
+     * @param httpUrl
+     * @param param
+     * @return
+     */
+    File downloadFile(HttpUrl httpUrl, @HttpParam("param") String param);
 
 }
