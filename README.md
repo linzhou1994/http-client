@@ -5,6 +5,18 @@
     2.可以自定义请求头
     3.默认使用okhttp实现,支持自定义动态代理类
     4.支持文件上传、下载
+    
+## 项目启动 @EnableHttpClient
+    @SpringBootApplication
+    @EnableHttpClient
+    @ComponentScan(basePackages = {"com.http"})
+    public class Application {
+    
+        public static void main(String[] args) {
+            SpringApplication.run(Application.class, args);
+        }
+  
+    }
 
 ## client写法
 ### HttpTestClient (定义http请求)

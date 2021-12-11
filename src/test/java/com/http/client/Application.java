@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@EnableHttpClient(basePackages = {"com.http.test","com.http.client"})
+@EnableHttpClient
 @ComponentScan(basePackages = {"com.http"})
 public class Application {
 
