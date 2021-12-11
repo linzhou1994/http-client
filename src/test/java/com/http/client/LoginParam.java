@@ -11,6 +11,5 @@ import lombok.Data;
 @Data
 public class LoginParam {
     private String password;
-    private String phone;
-    private String validate;
+    private String name;
 }

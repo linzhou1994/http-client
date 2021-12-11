@@ -20,10 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.*;
 import java.net.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class OkHttpClientUtil {
 
@@ -211,13 +208,17 @@ public class OkHttpClientUtil {
         Request.Builder requestBuilder = getRequestBuilder(context);
 
         RequestBody requestBody;
-        if (CollectionUtils.isNotEmpty(context.getUploadFiles())) {
-            requestBody = getMultipartBuilderBody(context);
-        } else if (StringUtils.isNotBlank(body)) {
+//        if (CollectionUtils.isNotEmpty(context.getUploadFiles())) {
+//            requestBody = getMultipartBuilderBody(context);
+//        } else
+        if (StringUtils.isNotBlank(body)) {
             requestBody = getRequestBody(body);
 
+        } else if (CollectionUtils.isNotEmpty(context.getUploadFiles())
+                || CollectionUtils.isNotEmpty(context.getNameValueParams())) {
+            requestBody = getMultipartBuilderBody(context);
         } else {
-            requestBody = GetFormEncodingBody(context);
+            requestBody = RequestBody.create(null, "");
         }
         requestBuilder.post(requestBody);
 
@@ -232,8 +233,7 @@ public class OkHttpClientUtil {
         List<UploadFile> uploadFiles = context.getUploadFiles();
         List<NameValueParam> params = context.getNameValueParams();
         for (NameValueParam param : params) {
-            builder.addPart(Headers.of("Content-Disposition", "form-data; name=\"" + param.getName() + "\""),
-                    RequestBody.create(null, param.getValue()));
+            builder.addFormDataPart(param.getName(), param.getValue());
         }
         if (CollectionUtils.isNotEmpty(uploadFiles)) {
             RequestBody fileBody = null;
@@ -243,7 +243,7 @@ public class OkHttpClientUtil {
                 fileBody = RequestBody.create(MediaType.parse(guessMimeType(fileName)), uploadFile.getFile().getBytes());
                 //根据文件名设置contentType
                 builder.addPart(Headers.of("Content-Disposition",
-                                "form-data; name=\"" + uploadFile.getName() + "\"; filename=\"" + fileName + "\""),
+                        "form-data; name=\"" + uploadFile.getName() + "\"; filename=\"" + fileName + "\""),
                         fileBody);
             }
         }
@@ -253,16 +253,16 @@ public class OkHttpClientUtil {
     }
 
     private static RequestBody GetFormEncodingBody(HttpRequestContext context) {
-        RequestBody requestBody;
         List<NameValueParam> params = context.getNameValueParams();
-        FormEncodingBuilder builder = new FormEncodingBuilder();
         if (CollectionUtils.isNotEmpty(params)) {
+            FormEncodingBuilder builder = new FormEncodingBuilder();
             for (NameValueParam param : params) {
                 builder.add(param.getName(), param.getValue());
             }
+            return builder.build();
         }
-        requestBody = builder.build();
-        return requestBody;
+
+        return null;
     }
 
     private static RequestBody getRequestBody(String body) {

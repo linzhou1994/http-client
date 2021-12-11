@@ -1,6 +1,6 @@
 package com.http.client.handler;
 
-import com.http.client.bo.HttpClientResponse;
+import com.http.client.response.HttpClientResponse;
 import com.http.client.context.HttpRequestContext;
 
 /**

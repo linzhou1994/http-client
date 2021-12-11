@@ -114,7 +114,7 @@ public class HttpRequestContext {
             return false;
         }
 
-        return StringUtils.isNotBlank(param.getBody()) || CollectionUtils.isNotEmpty(param.getUploadFiles());
+        return StringUtils.isNotBlank(param.getBody());
     }
 
     /**

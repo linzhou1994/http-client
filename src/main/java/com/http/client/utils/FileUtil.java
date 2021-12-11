@@ -1,16 +1,12 @@
 package com.http.client.utils;
 
-import com.http.client.bo.HttpClientResponse;
-import com.squareup.okhttp.Response;
+import com.http.client.response.HttpClientResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Optional;
 
 /**
@@ -20,16 +16,30 @@ import java.util.Optional;
  * @Description
  */
 public class FileUtil {
+    private static final String DEFAULT_PATH = "src/main/resources/httpClient/";
+
+    public static File getFile(String path) throws FileNotFoundException {
+       return ResourceUtils.getFile("classpath:"+path);
+    }
 
     public static File downFile(HttpClientResponse response) {
-        return downFile(response, "httpClient/");
+        return downFile(response, DEFAULT_PATH);
     }
 
     public static File downFile(HttpClientResponse response, String downPath) {
-        String fileName = getFilePath(response, downPath);
+        String fileName = getFileName(response);
+       return downFile(response.getInputStream(),downPath,fileName);
+    }
+
+    public static File downFile(InputStream is, String downPath,String fileName) {
+        String filePath = getFilePath(downPath, fileName);
+        File file = new File(downPath);
+        if (!file.isDirectory()) {
+            //递归生成文件夹
+            file.mkdirs();
+        }
         try {
-            InputStream is = new ByteArrayInputStream(response.getBytes());
-            FileOutputStream fos = new FileOutputStream(fileName);
+            FileOutputStream fos = new FileOutputStream(filePath);
             int len;
             byte[] bytes = new byte[4096];
             while ((len = is.read(bytes)) != -1) {
@@ -51,12 +61,29 @@ public class FileUtil {
      * @return
      * @throws IOException
      */
+    public static File getFile(MultipartFile file, String path) throws IOException {
+        if (StringUtils.isBlank(path)) {
+            path = DEFAULT_PATH;
+        }
+        String fileName = file.getOriginalFilename();
+
+        return downFile(file.getInputStream(),path,fileName);
+    }
+
+    /**
+     * 文件类型转换
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     */
     public static MockMultipartFile getMockMultipartFile(File file) throws IOException {
         //如果是文件下载
         InputStream is = new FileInputStream(file);
         //创建文件
         return new MockMultipartFile(file.getName(), is);
     }
+
 
     /**
      * 获取文件
@@ -67,8 +94,7 @@ public class FileUtil {
      */
     public static MockMultipartFile getMockMultipartFile(HttpClientResponse response) throws IOException {
         //如果是文件下载
-        byte[] bytes = response.getBytes();
-        InputStream inputStream = new ByteArrayInputStream(bytes);
+        InputStream inputStream = response.getInputStream();
         //创建文件
         return new MockMultipartFile(getFileName(response), inputStream);
     }
@@ -83,15 +109,15 @@ public class FileUtil {
                 .orElse(getUrlFileName(response));
     }
 
-    private static String getFilePath(HttpClientResponse response, String path) {
+    private static String getFilePath( String path,String fileName) {
         if (StringUtils.isBlank(path)) {
-            return getFileName(response);
+            return fileName;
         }
         StringBuilder stringBuilder = new StringBuilder(path);
         if (path.lastIndexOf("/") != path.length()) {
             stringBuilder.append("/");
         }
-        return stringBuilder.append(getFileName(response)).toString();
+        return stringBuilder.append(fileName).toString();
     }
 
     /**
@@ -102,11 +128,10 @@ public class FileUtil {
     private static String getHeaderFileName(HttpClientResponse response) {
         String dispositionHeader = response.getHeader("Content-Disposition");
         if (StringUtils.isNotBlank(dispositionHeader)) {
-            dispositionHeader.replace("attachment;filename=", "");
-            dispositionHeader.replace("filename*=utf-8", "");
-            String[] strings = dispositionHeader.split("; ");
+            String[] strings = dispositionHeader.split(";");
             if (strings.length > 1) {
                 dispositionHeader = strings[1].replace("filename=", "");
+                dispositionHeader = dispositionHeader.replace("fileName=", "");
                 dispositionHeader = dispositionHeader.replace("\"", "");
                 return dispositionHeader;
             }

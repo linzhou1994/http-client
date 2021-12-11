@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.http.client.annotation.HttpFile;
 import com.http.client.annotation.HttpParam;
 import com.http.client.bo.FileParam;
-import com.http.client.bo.HttpClientResponse;
+import com.http.client.response.HttpClientResponse;
 import com.http.client.bo.HttpHeader;
 import com.http.client.bo.HttpUrl;
 import com.http.client.bo.MethodParamResult;
@@ -14,6 +14,7 @@ import com.http.client.bo.UploadFile;
 import com.http.client.config.HttpClientConfig;
 import com.http.client.context.HttpRequestContext;
 import com.http.client.enums.HttpRequestMethod;
+import com.http.client.exception.HttpErrorException;
 import com.http.client.exception.ParamException;
 import com.http.client.factorybean.HttpFactoryBean;
 import com.http.client.handler.HttpClientHandler;
@@ -76,6 +77,9 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
     }
 
     private Object getReturnObject(HttpClientResponse response) throws IOException {
+        if (!response.isSuccessful()){
+            throw new HttpErrorException(response.string());
+        }
         Class<?> returnType = response.getContext().getMethod().getReturnType();
 
         if (returnType == MultipartFile.class) {

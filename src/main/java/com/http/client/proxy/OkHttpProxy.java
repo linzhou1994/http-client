@@ -1,6 +1,6 @@
 package com.http.client.proxy;
 
-import com.http.client.bo.HttpClientResponse;
+import com.http.client.response.HttpClientResponse;
 import com.http.client.bo.HttpHeader;
 import com.http.client.context.HttpRequestContext;
 import com.http.client.utils.OkHttpClientUtil;
@@ -23,8 +23,9 @@ public class OkHttpProxy extends AbstractHttpProxy {
             response = OkHttpClientUtil.postResponse(context);
         }
         return HttpClientResponse.builder().contentType(response.body().contentType())
-                .bytes(response.body().bytes())
                 .httpHeader(getHeaders(response))
+                .inputStream(response.body().byteStream())
+                .code(response.code())
                 .build();
     }
 
