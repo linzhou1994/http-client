@@ -25,10 +25,11 @@ public interface HttpClientInterceptor {
      * http请求之后调用
      *
      * @param response 返回数据
-     * @return 如果有返回值 则直接返回本方法的返回值当做本次请求的返回值
+     * @param rlt 原本要返回的值
+     * @return 最终要返回值
      */
-    default Object httpAfter(HttpClientResponse response) throws Exception {
-        return null;
+    default Object httpAfter(HttpClientResponse response,Object rlt) throws Exception {
+        return rlt;
     }
 
 

@@ -70,49 +70,10 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         }
         HttpClientResponse response = doInvoke(context);
         response.setContext(context);
+        rlt = HttpClientResultHandlerManager.getReturnObject(response);
         //执行httpAfter方法处理返回数据
-        rlt = runHttpAfter(response);
-        if (Objects.nonNull(rlt)) {
-            return rlt;
-        }
-        return HttpClientResultHandlerManager.getReturnObject(response);
+        return runHttpAfter(response,rlt);
     }
-//
-//    private Object getReturnObject(HttpClientResponse response) throws IOException {
-//        if (!response.isSuccessful()) {
-//            throw new HttpErrorException(response.string());
-//        }
-//        Class<?> returnType = response.getContext().getMethod().getReturnType();
-//
-//        if (returnType == MultipartFile.class) {
-//            return FileUtil.getMockMultipartFile(response);
-//        }
-//        if (returnType == File.class) {
-//            return FileUtil.downFile(response);
-//        }
-//
-//        String result = response.string();
-//        if (returnType == String.class) {
-//            return result;
-//        }
-//        if (returnType == Integer.class) {
-//            return Integer.parseInt(result);
-//        }
-//        if (returnType == Double.class) {
-//            return Double.parseDouble(result);
-//        }
-//        if (returnType == Float.class) {
-//            return Float.parseFloat(result);
-//        }
-//        if (returnType == Long.class) {
-//            return Long.parseLong(result);
-//        }
-//        if (returnType == BigDecimal.class) {
-//            return new BigDecimal(result);
-//        }
-//
-//        return JSON.parseObject(result, returnType);
-//    }
 
 
     protected abstract HttpClientResponse doInvoke(HttpRequestContext context) throws Throwable;
@@ -177,8 +138,8 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         }
     }
 
-    protected HttpClientConfig getConfig(){
-        if (Objects.isNull(httpClientConfig)){
+    protected HttpClientConfig getConfig() {
+        if (Objects.isNull(httpClientConfig)) {
             httpClientConfig = SpringUtil.getBean(HttpClientConfig.class);
         }
         return httpClientConfig;
@@ -205,14 +166,11 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
      *
      * @param response
      */
-    private Object runHttpAfter(HttpClientResponse response) throws Exception {
+    private Object runHttpAfter(HttpClientResponse response,Object rlt) throws Exception {
         for (HttpClientInterceptor httpClientInterceptor : getHttpClientInterceptorList()) {
-            Object rlt = httpClientInterceptor.httpAfter(response);
-            if (Objects.nonNull(rlt)) {
-                return rlt;
-            }
+            rlt = httpClientInterceptor.httpAfter(response,rlt);
         }
-        return null;
+        return rlt;
     }
 
     protected List<HttpClientInterceptor> getHttpClientInterceptorList() {
