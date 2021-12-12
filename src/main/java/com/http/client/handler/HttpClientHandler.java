@@ -15,14 +15,21 @@ public interface HttpClientHandler {
      * 参数解析之后,调用http请求之前执行
      *
      * @param context 解析参数的上下文
+     * @return  如果有返回值 则直接返回本方法的返回值当做本次请求的返回值
      */
-    default Object httpBefore(HttpRequestContext context){return null;}
+    default Object httpBefore(HttpRequestContext context) {
+        return null;
+    }
 
     /**
      * http请求之后调用
      *
      * @param response 返回数据
-     * @return
+     * @return 如果有返回值 则直接返回本方法的返回值当做本次请求的返回值
      */
-    default Object httpAfter(HttpClientResponse response) throws Exception{return null;};
+    default Object httpAfter(HttpClientResponse response) throws Exception {
+        return null;
+    }
+
+
 }
