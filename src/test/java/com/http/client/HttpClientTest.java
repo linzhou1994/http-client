@@ -78,9 +78,11 @@ public class HttpClientTest extends BaseTest {
      * 文件下载
      */
     @Test
-    public void downloadFileTest() {
+    public void downloadFileTest() throws Exception {
         HttpUrl httpUrl = new HttpUrl("http://127.0.0.1:8080/file/downloadFile");
         File file = httpDownloadClient.downloadFile(httpUrl, "123");
+        String s = new String(getByte(new FileInputStream(file)), StandardCharsets.UTF_8);
+        log.info("downloadMultipartFileTest test:" + s);
     }
 
     /**

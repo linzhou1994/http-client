@@ -16,7 +16,7 @@ import java.util.Optional;
  * @Description
  */
 public class FileUtil {
-    private static final String DEFAULT_PATH = "src/main/resources/httpClient/";
+    private static final String DEFAULT_PATH = "src/main/resources/httpClient/down/file";
 
     public static File getFile(String path) throws FileNotFoundException {
        return ResourceUtils.getFile("classpath:"+path);
@@ -51,7 +51,7 @@ public class FileUtil {
         } catch (Exception ex) {
             return null;
         }
-        return new File(fileName);
+        return new File(filePath);
     }
 
     /**

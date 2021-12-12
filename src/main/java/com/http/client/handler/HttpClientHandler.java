@@ -16,7 +16,7 @@ public interface HttpClientHandler {
      *
      * @param context 解析参数的上下文
      */
-    void httpBefore(HttpRequestContext context);
+    default Object httpBefore(HttpRequestContext context){return null;}
 
     /**
      * http请求之后调用
@@ -24,5 +24,5 @@ public interface HttpClientHandler {
      * @param response 返回数据
      * @return
      */
-    void httpAfter(HttpClientResponse response) throws Exception;
+    default Object httpAfter(HttpClientResponse response) throws Exception{return null;};
 }

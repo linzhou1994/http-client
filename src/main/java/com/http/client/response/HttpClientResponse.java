@@ -2,12 +2,9 @@ package com.http.client.response;
 
 import com.http.client.bo.HttpHeader;
 import com.http.client.context.HttpRequestContext;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.internal.Util;
 import lombok.Builder;
 import lombok.Data;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,14 +20,13 @@ import java.nio.charset.Charset;
 @Builder
 public class HttpClientResponse {
     private int code;
-    private MediaType contentType;
+    private final Charset charset;
     private HttpHeader httpHeader = new HttpHeader();
     private HttpRequestContext context;
     private InputStream inputStream;
 
     private Charset charset() {
-        MediaType contentType = this.contentType;
-        return contentType != null ? contentType.charset(Util.UTF_8) : Util.UTF_8;
+        return charset != null ? charset : Charset.forName("UTF-8");
     }
 
     public String string() throws IOException {
@@ -48,10 +44,10 @@ public class HttpClientResponse {
     }
 
     public String getHeader(String name) {
-        return httpHeader.getHeader(name,null);
+        return httpHeader.getHeader(name, null);
     }
 
-    public String getHttpUrl(){
+    public String getHttpUrl() {
         return context.getHttpUrl();
     }
 

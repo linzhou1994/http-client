@@ -68,16 +68,22 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         //设置httpUrl
         setHttpUrl(context);
         //执行httpBefore方法
-        runHttpBefore(context);
+        Object rlt = runHttpBefore(context);
+        if (Objects.nonNull(rlt)) {
+            return rlt;
+        }
         HttpClientResponse response = doInvoke(context);
         response.setContext(context);
         //执行httpAfter方法处理返回数据
-        runHttpAfter( response);
+        rlt = runHttpAfter(response);
+        if (Objects.nonNull(rlt)) {
+            return rlt;
+        }
         return getReturnObject(response);
     }
 
     private Object getReturnObject(HttpClientResponse response) throws IOException {
-        if (!response.isSuccessful()){
+        if (!response.isSuccessful()) {
             throw new HttpErrorException(response.string());
         }
         Class<?> returnType = response.getContext().getMethod().getReturnType();
@@ -85,7 +91,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         if (returnType == MultipartFile.class) {
             return FileUtil.getMockMultipartFile(response);
         }
-        if (returnType == File.class){
+        if (returnType == File.class) {
             return FileUtil.downFile(response);
         }
 
@@ -206,9 +212,9 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         } else if (arg instanceof FileParam) {
             FileParam fileParam = (FileParam) arg;
             uploadFile = new UploadFile(httpFile, fileParam.getFile(), fileParam.getParam());
-        }else if (arg instanceof File){
+        } else if (arg instanceof File) {
             uploadFile = new UploadFile(httpFile, FileUtil.getMockMultipartFile((File) arg));
-        }else {
+        } else {
             throw new ParamException("第" + i + "个参数格式错误,上传文件应为MultipartFile类型,当前类型:" + arg.getClass().getName());
         }
         return uploadFile;
@@ -299,10 +305,14 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
      *
      * @param context
      */
-    private void runHttpBefore(HttpRequestContext context) {
+    private Object runHttpBefore(HttpRequestContext context) {
         for (HttpClientHandler httpClientHandler : getHttpClientHandlerList()) {
-            httpClientHandler.httpBefore(context);
+            Object rlt = httpClientHandler.httpBefore(context);
+            if (Objects.nonNull(rlt)) {
+                return rlt;
+            }
         }
+        return null;
     }
 
     /**
@@ -310,10 +320,14 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
      *
      * @param response
      */
-    private void runHttpAfter(HttpClientResponse response) throws Exception {
+    private Object runHttpAfter(HttpClientResponse response) throws Exception {
         for (HttpClientHandler httpClientHandler : getHttpClientHandlerList()) {
-           httpClientHandler.httpAfter(response);
+            Object rlt = httpClientHandler.httpAfter(response);
+            if (Objects.nonNull(rlt)) {
+                return rlt;
+            }
         }
+        return null;
     }
 
     protected List<HttpClientHandler> getHttpClientHandlerList() {

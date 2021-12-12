@@ -4,10 +4,13 @@ import com.http.client.response.HttpClientResponse;
 import com.http.client.bo.HttpHeader;
 import com.http.client.context.HttpRequestContext;
 import com.http.client.utils.OkHttpClientUtil;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 使用OkHttp的动态代理
@@ -22,7 +25,9 @@ public class OkHttpProxy extends AbstractHttpProxy {
         } else {
             response = OkHttpClientUtil.postResponse(context);
         }
-        return HttpClientResponse.builder().contentType(response.body().contentType())
+        assert response != null;
+        return HttpClientResponse.builder()
+                .charset(Optional.of(response).map(Response::body).map(ResponseBody::contentType).map(MediaType::charset).orElse(null))
                 .httpHeader(getHeaders(response))
                 .inputStream(response.body().byteStream())
                 .code(response.code())
