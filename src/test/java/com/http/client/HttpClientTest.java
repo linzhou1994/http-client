@@ -31,6 +31,23 @@ public class HttpClientTest extends BaseTest {
         String rlt = httpTestClient.postLogin(p);
         log.info("rlt1:" + rlt);
     }
+    /**
+     * post 请求
+     */
+    @Test
+    public void getDouble() {
+        double rlt = httpTestClient.getDouble();
+        log.info("rlt1:" + rlt);
+    }
+    /**
+     * get 请求
+     */
+    @Test
+    public void getInt() {
+
+        int rlt = httpTestClient.getInt();
+        log.info("rlt1:" + rlt);
+    }
 
     /**
      * post 无参数请求
@@ -82,7 +99,7 @@ public class HttpClientTest extends BaseTest {
         HttpUrl httpUrl = new HttpUrl("http://127.0.0.1:8080/file/downloadFile");
         File file = httpDownloadClient.downloadFile(httpUrl, "123");
         String s = new String(getByte(new FileInputStream(file)), StandardCharsets.UTF_8);
-        log.info("downloadMultipartFileTest test:" + s);
+        log.info("downloadFileTest test:" + s);
     }
 
     /**

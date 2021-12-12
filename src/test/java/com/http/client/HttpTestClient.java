@@ -28,6 +28,18 @@ public interface HttpTestClient {
     String postLogin(LoginParam param);
 
     /**
+     * 无参的get请求
+     * @return
+     */
+    @HttpClient(path = "getInt",method = HttpRequestMethod.GET)
+    int getInt();
+    /**
+     * 无参的post请求
+     * @return
+     */
+    @HttpClient(path = "getDouble",method = HttpRequestMethod.POST)
+    double getDouble();
+    /**
      * 无参的post请求
      * @return
      */

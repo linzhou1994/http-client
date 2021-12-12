@@ -18,7 +18,7 @@ public class MethodParamResult {
     /**
      * 自定义的请求头
      */
-    private HttpHeader httpHeader;
+    private HttpHeader httpHeader = new HttpHeader();
     /**
      * body形式的数据
      */
@@ -87,5 +87,24 @@ public class MethodParamResult {
 
     public void setHttpUrl(HttpUrl httpUrl) {
         this.httpUrl = httpUrl;
+    }
+
+    public void addMethodParam(Object methodParam) {
+        if (methodParam instanceof NameValueParam) {
+            //处理表单参数
+            addNameValueParam((NameValueParam) methodParam);
+        } else if (methodParam instanceof UploadFile) {
+            //处理文件上传
+            setUploadFile((UploadFile) methodParam);
+        } else if (methodParam instanceof HttpHeader) {
+            //设置请求头
+            httpHeader.addHeader((HttpHeader) methodParam);
+        } else if (methodParam instanceof HttpUrl) {
+            //处理自定义url
+            setHttpUrl((HttpUrl) methodParam);
+        } else {
+            //处理body
+            setBody((String) methodParam);
+        }
     }
 }

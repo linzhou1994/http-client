@@ -32,4 +32,12 @@ public class LoginController {
         jsonObject.put("password",password);
         return jsonObject.toJSONString();
     }
+    @GetMapping("getInt")
+    public Integer getInt(){
+        return 1994;
+    }
+    @PostMapping("getDouble")
+    public Double getDouble(){
+        return 12345.12D;
+    }
 }

@@ -1,4 +1,4 @@
-package com.http.client.handler;
+package com.http.client.interceptor;
 
 import com.http.client.response.HttpClientResponse;
 import com.http.client.context.HttpRequestContext;
@@ -9,7 +9,7 @@ import com.http.client.context.HttpRequestContext;
  * @createTime 2021年12月08日 14:31:00
  * @Description
  */
-public interface HttpClientHandler {
+public interface HttpClientInterceptor {
 
     /**
      * 参数解析之后,调用http请求之前执行
