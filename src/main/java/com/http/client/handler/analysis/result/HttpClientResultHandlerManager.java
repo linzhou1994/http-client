@@ -1,10 +1,9 @@
 package com.http.client.handler.analysis.result;
 
+import com.biz.tool.spring.SpringUtil;
 import com.http.client.response.HttpClientResponse;
-import com.http.client.utils.SpringUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Objects;
 

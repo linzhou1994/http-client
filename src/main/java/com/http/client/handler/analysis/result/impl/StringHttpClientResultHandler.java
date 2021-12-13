@@ -2,11 +2,7 @@ package com.http.client.handler.analysis.result.impl;
 
 import com.http.client.handler.analysis.result.HttpClientResultHandler;
 import com.http.client.response.HttpClientResponse;
-import com.http.client.utils.FileUtil;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
 
 /**
  * ////////////////////////////////////////////////////////////////////

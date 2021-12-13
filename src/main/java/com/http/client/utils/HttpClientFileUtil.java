@@ -1,5 +1,6 @@
 package com.http.client.utils;
 
+import com.biz.tool.file.FileUtil;
 import com.http.client.response.HttpClientResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.mock.web.MockMultipartFile;
@@ -15,12 +16,8 @@ import java.util.Optional;
  * @createTime 2021年12月08日 15:55:00
  * @Description
  */
-public class FileUtil {
+public class HttpClientFileUtil {
     private static final String DEFAULT_PATH = "src/main/resources/httpClient";
-
-    public static File getFile(String path) throws FileNotFoundException {
-       return ResourceUtils.getFile("classpath:"+path);
-    }
 
     public static File downFile(HttpClientResponse response) {
         return downFile(response, DEFAULT_PATH);
@@ -28,61 +25,9 @@ public class FileUtil {
 
     public static File downFile(HttpClientResponse response, String downPath) {
         String fileName = getFileName(response);
-       return downFile(response.getInputStream(),downPath,fileName);
+       return FileUtil.downFile(response.getInputStream(),downPath,fileName);
     }
 
-    public static File downFile(InputStream is, String downPath,String fileName) {
-        String filePath = getFilePath(downPath, fileName);
-        File file = new File(downPath);
-        if (!file.isDirectory()) {
-            //递归生成文件夹
-            file.mkdirs();
-        }
-        try {
-            FileOutputStream fos = new FileOutputStream(filePath);
-            int len;
-            byte[] bytes = new byte[4096];
-            while ((len = is.read(bytes)) != -1) {
-                fos.write(bytes, 0, len);
-            }
-            fos.flush();
-            is.close();
-            fos.close();
-        } catch (Exception ex) {
-            return null;
-        }
-        return new File(filePath);
-    }
-
-    /**
-     * 文件类型转换
-     *
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    public static File getFile(MultipartFile file, String path) throws IOException {
-        if (StringUtils.isBlank(path)) {
-            path = DEFAULT_PATH;
-        }
-        String fileName = file.getOriginalFilename();
-
-        return downFile(file.getInputStream(),path,fileName);
-    }
-
-    /**
-     * 文件类型转换
-     *
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    public static MockMultipartFile getMockMultipartFile(File file) throws IOException {
-        //如果是文件下载
-        InputStream is = new FileInputStream(file);
-        //创建文件
-        return new MockMultipartFile(file.getName(), is);
-    }
 
 
     /**

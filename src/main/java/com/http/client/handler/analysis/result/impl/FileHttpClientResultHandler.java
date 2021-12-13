@@ -2,10 +2,9 @@ package com.http.client.handler.analysis.result.impl;
 
 import com.http.client.handler.analysis.result.HttpClientResultHandler;
 import com.http.client.response.HttpClientResponse;
-import com.http.client.utils.FileUtil;
+import com.http.client.utils.HttpClientFileUtil;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
@@ -52,7 +51,7 @@ public class FileHttpClientResultHandler implements HttpClientResultHandler {
     @Override
     public Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception {
         if (returnType == File.class) {
-            return FileUtil.downFile(response);
+            return HttpClientFileUtil.downFile(response);
         }
         return null;
     }

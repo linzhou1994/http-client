@@ -1,11 +1,11 @@
 package com.http.client.handler.analysis.method.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.biz.tool.annotations.AnnotationUtil;
 import com.http.client.annotation.HttpParam;
 import com.http.client.bo.NameValueParam;
 import com.http.client.exception.ParamException;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
-import com.http.client.utils.AnnotationUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 

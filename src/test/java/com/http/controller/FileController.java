@@ -2,8 +2,8 @@ package com.http.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.http.client.utils.FileUtil;
-import com.http.client.utils.ResponseUtil;
+import com.biz.tool.file.FileUtil;
+import com.biz.tool.spring.http.ResponseUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,39 +1,25 @@
 package com.http.client.proxy;
 
 
-import com.alibaba.fastjson.JSON;
-import com.http.client.annotation.HttpFile;
-import com.http.client.annotation.HttpParam;
-import com.http.client.bo.FileParam;
-import com.http.client.handler.analysis.method.AnalysisMethodParamHandlerManager;
-import com.http.client.handler.analysis.result.HttpClientResultHandlerManager;
-import com.http.client.response.HttpClientResponse;
-import com.http.client.bo.HttpHeader;
-import com.http.client.bo.HttpUrl;
+import com.biz.tool.spring.SpringUtil;
 import com.http.client.bo.MethodParamResult;
-import com.http.client.bo.NameValueParam;
-import com.http.client.bo.UploadFile;
 import com.http.client.config.HttpClientConfig;
 import com.http.client.context.HttpRequestContext;
 import com.http.client.enums.HttpRequestMethod;
-import com.http.client.exception.HttpErrorException;
 import com.http.client.exception.ParamException;
 import com.http.client.factorybean.HttpFactoryBean;
+import com.http.client.handler.analysis.method.AnalysisMethodParamHandlerManager;
+import com.http.client.handler.analysis.result.HttpClientResultHandlerManager;
 import com.http.client.interceptor.HttpClientInterceptor;
-import com.http.client.utils.FileUtil;
-import com.http.client.utils.SpringUtil;
+import com.http.client.response.HttpClientResponse;
 import com.http.client.utils.UrlUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 

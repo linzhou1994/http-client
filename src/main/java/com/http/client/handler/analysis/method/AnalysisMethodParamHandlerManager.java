@@ -1,6 +1,6 @@
 package com.http.client.handler.analysis.method;
 
-import com.http.client.utils.SpringUtil;
+import com.biz.tool.spring.SpringUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.IOException;

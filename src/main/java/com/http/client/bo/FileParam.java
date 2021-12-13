@@ -1,6 +1,7 @@
 package com.http.client.bo;
 
-import com.http.client.utils.FileUtil;
+import com.biz.tool.file.FileUtil;
+import com.http.client.utils.HttpClientFileUtil;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
