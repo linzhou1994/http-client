@@ -1,17 +1,4 @@
-package com.http.client.handler.analysis.method.impl;
-
-import com.alibaba.fastjson.JSON;
-import com.biz.tool.annotations.AnnotationUtil;
-import com.http.client.annotation.HttpParam;
-import com.http.client.context.form.NameValueParam;
-import com.http.client.exception.ParamException;
-import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
-
-import java.lang.annotation.Annotation;
-import java.math.BigDecimal;
-import java.util.Objects;
+package com.http.client.context.form;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -46,57 +33,21 @@ import java.util.Objects;
  * //                 不见满街漂亮妹，哪个归得程序员?                      //
  * ////////////////////////////////////////////////////////////////////
  *
- * @date : 2021/12/12 15:24
+ * @date : 2021/12/14 22:00
  * @author: linzhou
- * @description : 表单参数处理器
+ * @description : From
  */
-@Component
-public class HttpParamHandler implements AnalysisMethodParamHandler {
-    @Override
-    public Object analysisMethodParam(Object param, Annotation[] annotations) {
-        HttpParam httpParam = AnnotationUtil.findHttpAnnotation(annotations, HttpParam.class);
-        if (Objects.nonNull(httpParam)){
-            //处理表单参数
-            return getNameValueParam(param,httpParam);
-        }
-        return null;
-    }
+public interface From {
 
     /**
-     * 处理表单
-     */
-    private NameValueParam getNameValueParam(Object arg, HttpParam httpParam) {
-        //如果是表单参数,则当做表单处理
-        String name = httpParam.value();
-        if (StringUtils.isBlank(name)) {
-            throw new ParamException("参数格式错误,没有发现表单参数对应的名称");
-        }
-        String value;
-        if (arg == null) {
-            value = null;
-        } else if (isNameValuePair(arg)) {
-            value = arg.toString();
-        } else {
-            value = JSON.toJSONString(arg);
-        }
-        return new NameValueParam(httpParam, value);
-    }
-
-    /**
-     * 是否是基础类型
-     *
-     * @param o
+     * 获取表单名称
      * @return
      */
-    protected boolean isNameValuePair(Object o) {
-        if (o instanceof Integer
-                || o instanceof String
-                || o instanceof Double
-                || o instanceof Float
-                || o instanceof Long
-                || o instanceof BigDecimal) {
-            return true;
-        }
-        return false;
-    }
+    String getName();
+
+    /**
+     * 获取表单值
+     * @return
+     */
+    String getValue();
 }

@@ -1,5 +1,10 @@
 package com.http.client.bo;
 
+import com.http.client.context.body.FileBody;
+import com.http.client.context.form.From;
+import com.http.client.context.header.HttpHeader;
+import com.http.client.context.url.Url;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +19,7 @@ public class MethodParamResult {
     /**
      * 表单格式的参数键值对
      */
-    private List<NameValueParam> nameValueParams = new ArrayList<>();
+    private List<From> nameValueParams = new ArrayList<>();
     /**
      * 自定义的请求头
      */
@@ -26,13 +31,13 @@ public class MethodParamResult {
     /**
      * 需要上传的文件
      */
-    private List<UploadFile> uploadFiles = new ArrayList<>();
+    private List<FileBody> uploadFiles = new ArrayList<>();
     /**
      * 指定url
      */
-    private HttpUrl httpUrl;
+    private Url httpUrl;
 
-    public void addNameValueParam(NameValueParam nameValueParam) {
+    public void addNameValueParam(From nameValueParam) {
         if (nameValueParam != null) {
             nameValueParams.add(nameValueParam);
         }
@@ -59,49 +64,49 @@ public class MethodParamResult {
         this.body = body;
     }
 
-    public List<UploadFile> getUploadFiles() {
+    public List<FileBody> getUploadFiles() {
         return uploadFiles;
     }
 
-    public void setUploadFiles(List<UploadFile> uploadFiles) {
+    public void setUploadFiles(List<FileBody> uploadFiles) {
         this.uploadFiles = uploadFiles;
     }
 
-    public void setUploadFile(UploadFile uploadFile) {
+    public void setUploadFile(FileBody uploadFile) {
         if (Objects.nonNull(uploadFile)) {
             this.uploadFiles.add(uploadFile);
         }
     }
 
-    public List<NameValueParam> getNameValueParams() {
+    public List<From> getNameValueParams() {
         return nameValueParams;
     }
 
-    public void setNameValueParams(List<NameValueParam> nameValueParams) {
+    public void setNameValueParams(List<From> nameValueParams) {
         this.nameValueParams = nameValueParams;
     }
 
-    public HttpUrl getHttpUrl() {
+    public Url getHttpUrl() {
         return httpUrl;
     }
 
-    public void setHttpUrl(HttpUrl httpUrl) {
+    public void setHttpUrl(Url httpUrl) {
         this.httpUrl = httpUrl;
     }
 
     public void addMethodParam(Object methodParam) {
-        if (methodParam instanceof NameValueParam) {
+        if (methodParam instanceof From) {
             //处理表单参数
-            addNameValueParam((NameValueParam) methodParam);
-        } else if (methodParam instanceof UploadFile) {
+            addNameValueParam((From) methodParam);
+        } else if (methodParam instanceof FileBody) {
             //处理文件上传
-            setUploadFile((UploadFile) methodParam);
+            setUploadFile((FileBody) methodParam);
         } else if (methodParam instanceof HttpHeader) {
             //设置请求头
             httpHeader.addHeader((HttpHeader) methodParam);
-        } else if (methodParam instanceof HttpUrl) {
+        } else if (methodParam instanceof Url) {
             //处理自定义url
-            setHttpUrl((HttpUrl) methodParam);
+            setHttpUrl((Url) methodParam);
         } else {
             //处理body
             setBody((String) methodParam);

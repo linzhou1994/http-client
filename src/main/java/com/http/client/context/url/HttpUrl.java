@@ -1,4 +1,4 @@
-package com.http.client.bo;
+package com.http.client.context.url;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import lombok.Data;
  * @author linzhou
  */
 @Data
-public class HttpUrl {
+public class HttpUrl implements Url{
     private String url;
 
     public HttpUrl(String url) {

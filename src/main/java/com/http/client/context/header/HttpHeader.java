@@ -1,4 +1,4 @@
-package com.http.client.bo;
+package com.http.client.context.header;
 
 import org.apache.commons.collections4.CollectionUtils;
 

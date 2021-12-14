@@ -2,15 +2,14 @@ package com.http.client.context;
 
 
 import com.http.client.annotation.HttpClient;
-import com.http.client.bo.HttpHeader;
+import com.http.client.context.body.FileBody;
+import com.http.client.context.form.From;
+import com.http.client.context.header.HttpHeader;
 import com.http.client.bo.MethodParamResult;
-import com.http.client.bo.NameValueParam;
-import com.http.client.bo.UploadFile;
 import com.http.client.enums.HttpRequestMethod;
 import com.http.client.factorybean.HttpFactoryBean;
 import com.http.client.utils.UrlUtil;
 import lombok.Data;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
@@ -140,7 +139,7 @@ public class HttpRequestContext {
     }
 
 
-    public List<NameValueParam> getNameValueParams() {
+    public List<From> getNameValueParams() {
 
         if (Objects.nonNull(param)){
             return param.getNameValueParams();
@@ -148,7 +147,7 @@ public class HttpRequestContext {
         return Collections.emptyList();
     }
 
-    public List<UploadFile> getUploadFiles(){
+    public List<FileBody> getUploadFiles(){
         if (Objects.nonNull(param)){
             return param.getUploadFiles();
         }

@@ -1,9 +1,9 @@
 package com.http.client.utils;
 
 
-import com.http.client.bo.HttpHeader;
-import com.http.client.bo.NameValueParam;
-import com.http.client.bo.UploadFile;
+import com.http.client.context.body.FileBody;
+import com.http.client.context.form.From;
+import com.http.client.context.header.HttpHeader;
 import com.http.client.context.HttpRequestContext;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Call;
@@ -230,17 +230,17 @@ public class OkHttpClientUtil {
         MultipartBuilder builder = new MultipartBuilder()
                 .type(MultipartBuilder.FORM);
 
-        List<UploadFile> uploadFiles = context.getUploadFiles();
-        List<NameValueParam> params = context.getNameValueParams();
-        for (NameValueParam param : params) {
+        List<FileBody> uploadFiles = context.getUploadFiles();
+        List<From> params = context.getNameValueParams();
+        for (From param : params) {
             builder.addFormDataPart(param.getName(), param.getValue());
         }
         if (CollectionUtils.isNotEmpty(uploadFiles)) {
             RequestBody fileBody = null;
-            for (UploadFile uploadFile : uploadFiles) {
+            for (FileBody uploadFile : uploadFiles) {
 
-                String fileName = uploadFile.getFile().getName();
-                fileBody = RequestBody.create(MediaType.parse(guessMimeType(fileName)), uploadFile.getFile().getBytes());
+                String fileName = uploadFile.getFileName();
+                fileBody = RequestBody.create(MediaType.parse(guessMimeType(fileName)), uploadFile.getFileBytes());
                 //根据文件名设置contentType
                 builder.addPart(Headers.of("Content-Disposition",
                         "form-data; name=\"" + uploadFile.getName() + "\"; filename=\"" + fileName + "\""),
@@ -253,10 +253,10 @@ public class OkHttpClientUtil {
     }
 
     private static RequestBody GetFormEncodingBody(HttpRequestContext context) {
-        List<NameValueParam> params = context.getNameValueParams();
+        List<From> params = context.getNameValueParams();
         if (CollectionUtils.isNotEmpty(params)) {
             FormEncodingBuilder builder = new FormEncodingBuilder();
-            for (NameValueParam param : params) {
+            for (From param : params) {
                 builder.add(param.getName(), param.getValue());
             }
             return builder.build();

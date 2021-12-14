@@ -4,7 +4,7 @@ import com.biz.tool.annotations.AnnotationUtil;
 import com.biz.tool.file.FileUtil;
 import com.http.client.annotation.HttpFile;
 import com.http.client.bo.FileParam;
-import com.http.client.bo.UploadFile;
+import com.http.client.context.body.UploadFile;
 import com.http.client.exception.ParamException;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
 import org.springframework.stereotype.Component;

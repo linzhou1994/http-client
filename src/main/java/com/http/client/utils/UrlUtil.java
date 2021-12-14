@@ -1,6 +1,6 @@
 package com.http.client.utils;
 
-import com.http.client.bo.NameValueParam;
+import com.http.client.context.form.From;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,7 +19,7 @@ public class UrlUtil {
      * @param nameValueParams
      * @return
      */
-    public static String getParamUrl(String url, List<NameValueParam> nameValueParams) {
+    public static String getParamUrl(String url, List<From> nameValueParams) {
 
         if (nameValueParams == null || nameValueParams.isEmpty()) {
             return url;
@@ -34,7 +34,7 @@ public class UrlUtil {
         }
 
         StringBuilder sb = new StringBuilder();
-        for (NameValueParam nameValueParam : nameValueParams) {
+        for (From nameValueParam : nameValueParams) {
             sb.append(nameValueParam.getName()).append("=").append(nameValueParam.getValue()).append("&");
         }
 

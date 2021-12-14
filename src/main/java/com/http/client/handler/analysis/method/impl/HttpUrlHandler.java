@@ -1,10 +1,9 @@
 package com.http.client.handler.analysis.method.impl;
 
-import com.http.client.bo.HttpUrl;
+import com.http.client.context.url.HttpUrl;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 
 /**

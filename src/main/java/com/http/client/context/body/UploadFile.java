@@ -1,8 +1,9 @@
-package com.http.client.bo;
+package com.http.client.context.body;
 
 import com.http.client.annotation.HttpFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Map;
  *
  * @author linzhou
  */
-public class UploadFile {
+public class UploadFile implements FileBody{
 
     private HttpFile httpFile;
 
@@ -53,7 +54,18 @@ public class UploadFile {
         this.param = param;
     }
 
+    @Override
     public String getName(){
         return httpFile.value();
+    }
+
+    @Override
+    public String getFileName() {
+        return file.getOriginalFilename();
+    }
+
+    @Override
+    public byte[] getFileBytes() throws IOException {
+        return file.getBytes();
     }
 }

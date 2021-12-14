@@ -2,7 +2,7 @@ package com.http.client;
 
 
 import com.biz.tool.file.FileUtil;
-import com.http.client.bo.HttpUrl;
+import com.http.client.context.url.HttpUrl;
 import com.http.client.client.DownloadFileClient;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Test;

@@ -1,6 +1,6 @@
 package com.http.client.handler.analysis.method.impl;
 
-import com.http.client.bo.HttpHeader;
+import com.http.client.context.header.HttpHeader;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
 import org.springframework.stereotype.Component;
 

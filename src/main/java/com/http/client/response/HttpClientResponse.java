@@ -1,6 +1,6 @@
 package com.http.client.response;
 
-import com.http.client.bo.HttpHeader;
+import com.http.client.context.header.HttpHeader;
 import com.http.client.context.HttpRequestContext;
 import lombok.Builder;
 import lombok.Data;

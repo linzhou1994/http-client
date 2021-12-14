@@ -1,7 +1,7 @@
 package com.http.client.proxy;
 
 import com.http.client.response.HttpClientResponse;
-import com.http.client.bo.HttpHeader;
+import com.http.client.context.header.HttpHeader;
 import com.http.client.context.HttpRequestContext;
 import com.http.client.utils.OkHttpClientUtil;
 import com.squareup.okhttp.MediaType;

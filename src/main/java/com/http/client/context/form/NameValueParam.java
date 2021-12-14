@@ -1,4 +1,4 @@
-package com.http.client.bo;
+package com.http.client.context.form;
 
 
 import com.http.client.annotation.HttpParam;
@@ -8,7 +8,7 @@ import com.http.client.annotation.HttpParam;
  * @author linzhou
  */
 
-public class NameValueParam {
+public class NameValueParam implements From{
 
     private HttpParam httpParam;
     private String value;
@@ -18,6 +18,7 @@ public class NameValueParam {
         this.value = value;
     }
 
+    @Override
     public String getName(){
         return httpParam.value();
     }
@@ -30,6 +31,7 @@ public class NameValueParam {
         this.httpParam = httpParam;
     }
 
+    @Override
     public String getValue() {
         return value;
     }
