@@ -4,7 +4,9 @@ import com.biz.tool.annotations.AnnotationUtil;
 import com.biz.tool.file.FileUtil;
 import com.http.client.annotation.HttpFile;
 import com.http.client.bo.FileParam;
+import com.http.client.context.body.FileBody;
 import com.http.client.context.body.UploadFile;
+import com.http.client.context.body.UploadMultipartFile;
 import com.http.client.exception.ParamException;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
 import org.springframework.stereotype.Component;
@@ -69,16 +71,16 @@ public class HttpFileHandler implements AnalysisMethodParamHandler {
      * @param httpFile
      * @return
      */
-    private UploadFile getUploadFile(Object arg, HttpFile httpFile) throws IOException {
-        UploadFile uploadFile;
+    private FileBody getUploadFile(Object arg, HttpFile httpFile) throws IOException {
+        FileBody uploadFile;
         //保存需要上传的文件信息
         if (arg instanceof MultipartFile) {
-            uploadFile = new UploadFile(httpFile, (MultipartFile) arg);
+            uploadFile = new UploadMultipartFile(httpFile, (MultipartFile) arg);
         } else if (arg instanceof FileParam) {
             FileParam fileParam = (FileParam) arg;
-            uploadFile = new UploadFile(httpFile, fileParam.getFile(), fileParam.getParam());
+            uploadFile = new UploadMultipartFile(httpFile, fileParam.getFile(), fileParam.getParam());
         } else if (arg instanceof File) {
-            uploadFile = new UploadFile(httpFile, FileUtil.getMockMultipartFile((File) arg));
+            uploadFile = new UploadFile(httpFile, (File) arg);
         } else {
             throw new ParamException("参数格式错误,上传文件应为MultipartFile或者file类型,当前类型:" + arg.getClass().getName());
         }
