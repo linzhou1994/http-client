@@ -2,14 +2,15 @@ package com.http.client.proxy;
 
 
 import com.biz.tool.spring.SpringUtil;
-import com.http.client.bo.MethodParamResult;
+import com.http.client.bo.HttpClientRequest;
 import com.http.client.config.HttpClientConfig;
 import com.http.client.context.HttpRequestContext;
 import com.http.client.enums.HttpRequestMethod;
 import com.http.client.exception.ParamException;
 import com.http.client.factorybean.HttpFactoryBean;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandlerManager;
-import com.http.client.handler.analysis.result.HttpClientResultHandlerManager;
+import com.http.client.handler.http.request.SetHttpParamHandlerManager;
+import com.http.client.handler.http.result.HttpClientResultHandlerManager;
 import com.http.client.interceptor.HttpClientInterceptor;
 import com.http.client.response.HttpClientResponse;
 import com.http.client.utils.UrlUtil;
@@ -86,7 +87,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
     protected void analysisMethodParam(HttpRequestContext context) throws Exception {
         Object[] args = context.getArgs();
         Annotation[][] parameterAnnotations = context.getParameterAnnotations();
-        MethodParamResult result = new MethodParamResult();
+        HttpClientRequest result = new HttpClientRequest();
 
         if (args != null) {
 
@@ -98,7 +99,8 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
                 Annotation[] parameterAnnotation = parameterAnnotations[i];
 
                 Object methodParam = AnalysisMethodParamHandlerManager.analysisMethodParam(arg, parameterAnnotation);
-                result.addMethodParam(methodParam);
+//                result.addMethodParam(methodParam);
+                SetHttpParamHandlerManager.setHttpParam(result,methodParam);
             }
         }
         context.setParam(result);

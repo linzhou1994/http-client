@@ -4,8 +4,11 @@ import com.http.client.context.body.FileBody;
 import com.http.client.context.form.From;
 import com.http.client.context.header.HttpHeader;
 import com.http.client.context.url.Url;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +17,7 @@ import java.util.Objects;
  *
  * @author linzhou
  */
-public class MethodParamResult {
+public class HttpClientRequest {
 
     /**
      * 表单格式的参数键值对
@@ -56,6 +59,14 @@ public class MethodParamResult {
         this.httpHeader = httpHeader;
     }
 
+    public void addHttpHeader(HttpHeader httpHeader) {
+        if (Objects.isNull(this.httpHeader)){
+            this.httpHeader = httpHeader;
+        }else {
+            this.httpHeader.addHeader(httpHeader);
+        }
+    }
+
     public String getBody() {
         return body;
     }
@@ -94,8 +105,18 @@ public class MethodParamResult {
         this.httpUrl = httpUrl;
     }
 
+    public void addMethodParams(Collection<?> methodParams) {
+        if (CollectionUtils.isNotEmpty(methodParams)) {
+            for (Object methodParam : methodParams) {
+                addMethodParam(methodParam);
+            }
+        }
+    }
+
     public void addMethodParam(Object methodParam) {
-        if (methodParam instanceof From) {
+        if (methodParam instanceof Collection) {
+            addMethodParams((Collection<?>) methodParam);
+        } else if (methodParam instanceof From) {
             //处理表单参数
             addNameValueParam((From) methodParam);
         } else if (methodParam instanceof FileBody) {

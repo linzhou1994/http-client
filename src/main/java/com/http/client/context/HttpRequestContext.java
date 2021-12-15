@@ -5,7 +5,7 @@ import com.http.client.annotation.HttpClient;
 import com.http.client.context.body.FileBody;
 import com.http.client.context.form.From;
 import com.http.client.context.header.HttpHeader;
-import com.http.client.bo.MethodParamResult;
+import com.http.client.bo.HttpClientRequest;
 import com.http.client.enums.HttpRequestMethod;
 import com.http.client.factorybean.HttpFactoryBean;
 import com.http.client.utils.UrlUtil;
@@ -49,7 +49,7 @@ public class HttpRequestContext {
     /**
      * http请求参数
      */
-    private MethodParamResult param;
+    private HttpClientRequest param;
     /**
      * http请求地址
      */

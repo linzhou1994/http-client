@@ -1,10 +1,8 @@
-package com.http.client.handler.analysis.result.impl;
+package com.http.client.handler.http.result.impl;
 
-import com.http.client.handler.analysis.result.HttpClientResultHandler;
+import com.http.client.handler.http.result.HttpClientResultHandler;
 import com.http.client.response.HttpClientResponse;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -41,15 +39,15 @@ import java.math.BigDecimal;
  *
  * @date : 2021/12/12 15:53
  * @author: linzhou
- * @description : BigDecimal返回类处理
+ * @description : Integer返回处理
  */
 @Component
-public class BigDecimalHttpClientResultHandler implements HttpClientResultHandler {
+public class IntegerHttpClientResultHandler implements HttpClientResultHandler {
     @Override
     public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
-        if (returnType == BigDecimal.class) {
+        if (returnType == Integer.class||returnType == int.class) {
             String result = response.string();
-            return new BigDecimal(result);
+            return Integer.parseInt(result);
         }
         return null;
     }

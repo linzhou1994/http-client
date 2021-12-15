@@ -1,12 +1,8 @@
-package com.http.client.handler.analysis.result.impl;
+package com.http.client.handler.http.result;
 
-import com.http.client.handler.analysis.result.HttpClientResultHandler;
 import com.http.client.response.HttpClientResponse;
-import com.http.client.utils.HttpClientFileUtil;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.lang.annotation.Annotation;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -41,18 +37,17 @@ import java.io.File;
  * //                 不见满街漂亮妹，哪个归得程序员?                      //
  * ////////////////////////////////////////////////////////////////////
  *
- * @date : 2021/12/12 15:53
+ * @date : 2021/12/12 14:58
  * @author: linzhou
- * @description : 文件返回处理
+ * @description : httpClient返回结果值处理handler
  */
-@Component
-@Order(-1)
-public class FileHttpClientResultHandler implements HttpClientResultHandler {
-    @Override
-    public Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception {
-        if (returnType == File.class) {
-            return HttpClientFileUtil.downFile(response);
-        }
-        return null;
-    }
+public interface HttpClientResultHandler {
+
+    /**
+     * 责任链模式调用
+     * 生成返回参数
+     * @param response http请求结果
+     * @return
+     */
+    Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception;
 }

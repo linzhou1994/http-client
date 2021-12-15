@@ -1,6 +1,6 @@
-package com.http.client.handler.analysis.result.impl;
+package com.http.client.handler.http.result.impl;
 
-import com.http.client.handler.analysis.result.HttpClientResultHandler;
+import com.http.client.handler.http.result.HttpClientResultHandler;
 import com.http.client.response.HttpClientResponse;
 import org.springframework.stereotype.Component;
 
@@ -39,15 +39,14 @@ import org.springframework.stereotype.Component;
  *
  * @date : 2021/12/12 15:53
  * @author: linzhou
- * @description : Double返回类处理
+ * @description : String返回处理
  */
 @Component
-public class DoubleHttpClientResultHandler implements HttpClientResultHandler {
+public class StringHttpClientResultHandler implements HttpClientResultHandler {
     @Override
     public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
-        if (returnType == Double.class || returnType == double.class) {
-            String result = response.string();
-            return Double.parseDouble(result);
+        if (returnType == String.class) {
+            return response.string();
         }
         return null;
     }

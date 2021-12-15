@@ -1,6 +1,7 @@
-package com.http.client.handler.analysis.result.impl;
+package com.http.client.handler.http.result.impl;
 
-import com.http.client.handler.analysis.result.HttpClientResultHandler;
+import com.http.client.exception.HttpErrorException;
+import com.http.client.handler.http.result.HttpClientResultHandler;
 import com.http.client.response.HttpClientResponse;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -38,17 +39,17 @@ import org.springframework.stereotype.Component;
  * //                 不见满街漂亮妹，哪个归得程序员?                      //
  * ////////////////////////////////////////////////////////////////////
  *
- * @date : 2021/12/12 15:53
+ * @date : 2021/12/12 15:52
  * @author: linzhou
- * @description : Integer返回处理
+ * @description : 判断本次请求状态是否是200
  */
 @Component
-public class IntegerHttpClientResultHandler implements HttpClientResultHandler {
+@Order(-10)
+public class SuccessfulHttpClientResultHandler implements HttpClientResultHandler {
     @Override
-    public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
-        if (returnType == Integer.class||returnType == int.class) {
-            String result = response.string();
-            return Integer.parseInt(result);
+    public Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception {
+        if (!response.isSuccessful()) {
+            throw new HttpErrorException(response.string());
         }
         return null;
     }

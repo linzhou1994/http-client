@@ -1,8 +1,11 @@
-package com.http.client.handler.analysis.result.impl;
+package com.http.client.handler.http.result.impl;
 
-import com.http.client.handler.analysis.result.HttpClientResultHandler;
+import com.http.client.handler.http.result.HttpClientResultHandler;
 import com.http.client.response.HttpClientResponse;
+import com.http.client.utils.HttpClientFileUtil;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -39,15 +42,15 @@ import org.springframework.stereotype.Component;
  *
  * @date : 2021/12/12 15:53
  * @author: linzhou
- * @description : Long返回处理
+ * @description : MultipartFile返回处理
  */
 @Component
-public class LongHttpClientResultHandler implements HttpClientResultHandler {
+@Order(-1)
+public class MultipartFileHttpClientResultHandler implements HttpClientResultHandler {
     @Override
-    public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
-        if (returnType == Long.class||returnType == long.class) {
-            String result = response.string();
-            return Long.parseLong(result);
+    public Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception {
+        if (returnType == MultipartFile.class) {
+            return HttpClientFileUtil.getMockMultipartFile(response);
         }
         return null;
     }

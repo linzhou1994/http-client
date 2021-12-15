@@ -1,6 +1,6 @@
-package com.http.client.handler.analysis.result.impl;
+package com.http.client.handler.http.result.impl;
 
-import com.http.client.handler.analysis.result.HttpClientResultHandler;
+import com.http.client.handler.http.result.HttpClientResultHandler;
 import com.http.client.response.HttpClientResponse;
 import org.springframework.stereotype.Component;
 
@@ -39,14 +39,15 @@ import org.springframework.stereotype.Component;
  *
  * @date : 2021/12/12 15:53
  * @author: linzhou
- * @description : String返回处理
+ * @description : Long返回处理
  */
 @Component
-public class StringHttpClientResultHandler implements HttpClientResultHandler {
+public class LongHttpClientResultHandler implements HttpClientResultHandler {
     @Override
     public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
-        if (returnType == String.class) {
-            return response.string();
+        if (returnType == Long.class||returnType == long.class) {
+            String result = response.string();
+            return Long.parseLong(result);
         }
         return null;
     }

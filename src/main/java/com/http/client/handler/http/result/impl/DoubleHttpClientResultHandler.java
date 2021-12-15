@@ -1,8 +1,8 @@
-package com.http.client.handler.analysis.result;
+package com.http.client.handler.http.result.impl;
 
+import com.http.client.handler.http.result.HttpClientResultHandler;
 import com.http.client.response.HttpClientResponse;
-
-import java.lang.annotation.Annotation;
+import org.springframework.stereotype.Component;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -37,17 +37,18 @@ import java.lang.annotation.Annotation;
  * //                 不见满街漂亮妹，哪个归得程序员?                      //
  * ////////////////////////////////////////////////////////////////////
  *
- * @date : 2021/12/12 14:58
+ * @date : 2021/12/12 15:53
  * @author: linzhou
- * @description : httpClient返回结果值处理handler
+ * @description : Double返回类处理
  */
-public interface HttpClientResultHandler {
-
-    /**
-     * 责任链模式调用
-     * 生成返回参数
-     * @param response http请求结果
-     * @return
-     */
-    Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception;
+@Component
+public class DoubleHttpClientResultHandler implements HttpClientResultHandler {
+    @Override
+    public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
+        if (returnType == Double.class || returnType == double.class) {
+            String result = response.string();
+            return Double.parseDouble(result);
+        }
+        return null;
+    }
 }

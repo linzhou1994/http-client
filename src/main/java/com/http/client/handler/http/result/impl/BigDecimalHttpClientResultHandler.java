@@ -1,11 +1,10 @@
-package com.http.client.handler.analysis.result.impl;
+package com.http.client.handler.http.result.impl;
 
-import com.http.client.handler.analysis.result.HttpClientResultHandler;
+import com.http.client.handler.http.result.HttpClientResultHandler;
 import com.http.client.response.HttpClientResponse;
-import com.http.client.utils.HttpClientFileUtil;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.math.BigDecimal;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -42,15 +41,15 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @date : 2021/12/12 15:53
  * @author: linzhou
- * @description : MultipartFile返回处理
+ * @description : BigDecimal返回类处理
  */
 @Component
-@Order(-1)
-public class MultipartFileHttpClientResultHandler implements HttpClientResultHandler {
+public class BigDecimalHttpClientResultHandler implements HttpClientResultHandler {
     @Override
-    public Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception {
-        if (returnType == MultipartFile.class) {
-            return HttpClientFileUtil.getMockMultipartFile(response);
+    public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
+        if (returnType == BigDecimal.class) {
+            String result = response.string();
+            return new BigDecimal(result);
         }
         return null;
     }

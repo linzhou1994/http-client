@@ -1,10 +1,11 @@
-package com.http.client.handler.analysis.result.impl;
+package com.http.client.handler.http.result;
 
-import com.http.client.exception.HttpErrorException;
-import com.http.client.handler.analysis.result.HttpClientResultHandler;
+import com.biz.tool.spring.SpringUtil;
 import com.http.client.response.HttpClientResponse;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
+import org.apache.commons.collections4.CollectionUtils;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -39,18 +40,31 @@ import org.springframework.stereotype.Component;
  * //                 不见满街漂亮妹，哪个归得程序员?                      //
  * ////////////////////////////////////////////////////////////////////
  *
- * @date : 2021/12/12 15:52
+ * @date : 2021/12/12 15:49
  * @author: linzhou
- * @description : 判断本次请求状态是否是200
+ * @description : HttpClientResultHandlerManager
  */
-@Component
-@Order(-10)
-public class SuccessfulHttpClientResultHandler implements HttpClientResultHandler {
-    @Override
-    public Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception {
-        if (!response.isSuccessful()) {
-            throw new HttpErrorException(response.string());
+public class HttpClientResultHandlerManager {
+
+    private static List<HttpClientResultHandler> httpClientResultHandlers;
+
+    public static Object getReturnObject(HttpClientResponse response) throws Exception {
+
+        List<HttpClientResultHandler> httpClientResultHandlers = getAnalysisMethodParamHandlers();
+        Class<?> returnType = response.getContext().getMethod().getReturnType();
+        for (HttpClientResultHandler httpClientResultHandler : httpClientResultHandlers) {
+            Object rlt = httpClientResultHandler.getReturnObject(response,returnType);
+            if (Objects.nonNull(rlt)){
+                return rlt;
+            }
         }
         return null;
+    }
+
+    private static List<HttpClientResultHandler> getAnalysisMethodParamHandlers(){
+        if (CollectionUtils.isEmpty(httpClientResultHandlers)){
+            httpClientResultHandlers = SpringUtil.getBeanList(HttpClientResultHandler.class);
+        }
+        return httpClientResultHandlers;
     }
 }
