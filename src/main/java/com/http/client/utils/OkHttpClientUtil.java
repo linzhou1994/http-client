@@ -94,104 +94,6 @@ public class OkHttpClientUtil {
     }
 
 
-    public static File downFile(Response response) {
-        return downFile(response, "httpClient/");
-    }
-
-    public static File downFile(Response response, String downPath) {
-        String fileName = getFilePath(response, downPath);
-        try {
-            InputStream is;
-            is = response.body().byteStream();
-            FileOutputStream fos = null;
-
-            fos = new FileOutputStream(fileName);
-            int len;
-            byte[] bytes = new byte[4096];
-            while ((len = is.read(bytes)) != -1) {
-                fos.write(bytes, 0, len);
-            }
-            fos.flush();
-            is.close();
-            fos.close();
-        } catch (Exception ex) {
-            return null;
-        }
-        return new File(fileName);
-    }
-
-    /**
-     * 获取文件
-     *
-     * @param response
-     * @return
-     * @throws IOException
-     */
-    public static MockMultipartFile getMockMultipartFile(Response response) throws IOException {
-        //如果是文件下载
-        byte[] bytes = response.body().bytes();
-        InputStream inputStream = new ByteArrayInputStream(bytes);
-        //创建文件
-        return new MockMultipartFile(getFileName(response), inputStream);
-    }
-
-    private static String getFilePath(Response response, String path) {
-        if (StringUtils.isBlank(path)) {
-            return getFileName(response);
-        }
-        StringBuilder stringBuilder = new StringBuilder(path);
-        if (path.lastIndexOf("/") != path.length()) {
-            stringBuilder.append("/");
-        }
-        return stringBuilder.append(getFileName(response)).toString();
-    }
-
-    /**
-     * 获取文件名称
-     */
-    private static String getFileName(Response response) {
-        //从header中获取文件名称
-        return Optional.ofNullable(getHeaderFileName(response))
-                //如果header中没有文件名称,则从url上获取
-                .orElse(getUrlFileName(response));
-    }
-
-    /**
-     * 解析文件头
-     * Content-Disposition:attachment;filename=FileName.txt
-     * Content-Disposition: attachment; filename*="UTF-8''%E6%9B%BF%E6%8D%A2%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf"
-     */
-    private static String getHeaderFileName(Response response) {
-        String dispositionHeader = response.header("Content-Disposition");
-        if (StringUtils.isNotBlank(dispositionHeader)) {
-            dispositionHeader.replace("attachment;filename=", "");
-            dispositionHeader.replace("filename*=utf-8", "");
-            String[] strings = dispositionHeader.split("; ");
-            if (strings.length > 1) {
-                dispositionHeader = strings[1].replace("filename=", "");
-                dispositionHeader = dispositionHeader.replace("\"", "");
-                return dispositionHeader;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 通过url获取文件名称
-     *
-     * @param response
-     * @return
-     */
-    public static String getUrlFileName(Response response) {
-        return Optional.ofNullable(response)
-                .map(Response::request)
-                .map(Request::url)
-                .map(URL::toString)
-                .map(o -> o.substring(o.lastIndexOf("/") + 1))
-                .orElse("HttpClientDownFile");
-
-    }
-
     private static String guessMimeType(String path) {
         FileNameMap fileNameMap = URLConnection.getFileNameMap();
         String contentTypeFor = fileNameMap.getContentTypeFor(path);
@@ -252,18 +154,6 @@ public class OkHttpClientUtil {
         return requestBody;
     }
 
-    private static RequestBody GetFormEncodingBody(HttpRequestContext context) {
-        List<From> params = context.getNameValueParams();
-        if (CollectionUtils.isNotEmpty(params)) {
-            FormEncodingBuilder builder = new FormEncodingBuilder();
-            for (From param : params) {
-                builder.add(param.getName(), param.getValue());
-            }
-            return builder.build();
-        }
-
-        return null;
-    }
 
     private static RequestBody getRequestBody(String body) {
         RequestBody requestBody;
