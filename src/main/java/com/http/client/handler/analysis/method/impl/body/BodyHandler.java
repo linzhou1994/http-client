@@ -1,4 +1,11 @@
-package com.http.client.context.form;
+package com.http.client.handler.analysis.method.impl.body;
+
+import com.alibaba.fastjson.JSON;
+import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+import java.lang.annotation.Annotation;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -33,21 +40,31 @@ package com.http.client.context.form;
  * //                 不见满街漂亮妹，哪个归得程序员?                      //
  * ////////////////////////////////////////////////////////////////////
  *
- * @date : 2021/12/14 22:00
+ * @date : 2021/12/12 15:36
  * @author: linzhou
- * @description : From
+ * @description : 默认的body处理器
  */
-public interface From {
+@Component
+@Order
+public class BodyHandler implements AnalysisMethodParamHandler {
+    @Override
+    public Object analysisMethodParam(Object param, Annotation[] annotations) throws Exception {
+        return getBody(param);
+    }
 
     /**
-     * 获取表单名称
+     * 处理body
+     *
+     * @param arg
      * @return
      */
-    String getName();
-
-    /**
-     * 获取表单值
-     * @return
-     */
-    String getValue();
+    private String getBody(Object arg) {
+        String body;
+        if (arg instanceof String) {
+            body = (String) arg;
+        } else {
+            body = JSON.toJSONString(arg);
+        }
+        return body;
+    }
 }

@@ -8,27 +8,24 @@ import com.http.client.annotation.HttpParam;
  * @author linzhou
  */
 
-public class NameValueParam implements From{
+public class NameValueParam implements Form {
 
-    private HttpParam httpParam;
+    private String name;
     private String value;
 
-    public NameValueParam(HttpParam httpParam, String value) {
-        this.httpParam = httpParam;
+    public NameValueParam(String name, String value) {
+        this.name = name;
         this.value = value;
     }
 
+
     @Override
-    public String getName(){
-        return httpParam.value();
+    public String getName() {
+        return name;
     }
 
-    public HttpParam getHttpParam() {
-        return httpParam;
-    }
-
-    public void setHttpParam(HttpParam httpParam) {
-        this.httpParam = httpParam;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

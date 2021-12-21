@@ -1,7 +1,7 @@
 package com.http.client.handler.http.request.impl;
 
 import com.http.client.bo.HttpClientRequest;
-import com.http.client.context.form.From;
+import com.http.client.context.form.Form;
 import com.http.client.handler.http.request.SetHttpParamHandler;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 public class SetFromHandler implements SetHttpParamHandler {
     @Override
     public boolean setHttpParam(HttpClientRequest request, Object o) {
-        if (o instanceof From) {
+        if (o instanceof Form) {
             //处理表单参数
-            request.addNameValueParam((From) o);
+            request.addNameValueParam((Form) o);
             return true;
         }
 

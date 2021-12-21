@@ -1,10 +1,16 @@
-package com.http.client.handler.analysis.method.impl;
+package com.http.client.handler.analysis.method.impl.form;
 
-import com.http.client.context.url.HttpUrl;
+import com.biz.tool.annotations.AnnotationUtil;
+import com.http.client.annotation.HttpParam;
+import com.http.client.context.form.AnnotationNameValueParam;
+import com.http.client.exception.ParamException;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -39,17 +45,55 @@ import java.lang.annotation.Annotation;
  * //                 不见满街漂亮妹，哪个归得程序员?                      //
  * ////////////////////////////////////////////////////////////////////
  *
- * @date : 2021/12/12 15:34
+ * @date : 2021/12/12 15:24
  * @author: linzhou
- * @description : HttpUrlHandler
+ * @description : 基础类型表单参数处理器
  */
 @Component
-public class HttpUrlHandler implements AnalysisMethodParamHandler {
+public class HttpParamBasicClassHandler implements AnalysisMethodParamHandler {
     @Override
-    public Object analysisMethodParam(Object param, Annotation[] annotations) throws Exception {
-        if (param instanceof HttpUrl){
-            return param;
+    public Object analysisMethodParam(Object param, Annotation[] annotations) {
+        HttpParam httpParam = AnnotationUtil.findHttpAnnotation(annotations, HttpParam.class);
+        if (Objects.nonNull(httpParam) && isBasicClass(param)) {
+            //处理表单参数
+            return getNameValueParam(param, httpParam);
         }
         return null;
+    }
+
+    /**
+     * 处理表单
+     */
+    private AnnotationNameValueParam getNameValueParam(Object arg, HttpParam httpParam) {
+        //如果是表单参数,则当做表单处理
+        String name = httpParam.value();
+        if (StringUtils.isBlank(name)) {
+            throw new ParamException("参数格式错误,没有发现表单参数对应的名称");
+        }
+        String value;
+        if (arg == null) {
+            value = null;
+        } else {
+            value = arg.toString();
+        }
+        return new AnnotationNameValueParam(httpParam, value);
+    }
+
+    /**
+     * 是否是基础类型
+     *
+     * @param o
+     * @return
+     */
+    protected boolean isBasicClass(Object o) {
+        if (o instanceof Integer
+                || o instanceof String
+                || o instanceof Double
+                || o instanceof Float
+                || o instanceof Long
+                || o instanceof BigDecimal) {
+            return true;
+        }
+        return false;
     }
 }

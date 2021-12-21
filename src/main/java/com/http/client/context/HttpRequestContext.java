@@ -3,7 +3,7 @@ package com.http.client.context;
 
 import com.http.client.annotation.HttpClient;
 import com.http.client.context.body.FileBody;
-import com.http.client.context.form.From;
+import com.http.client.context.form.Form;
 import com.http.client.context.header.HttpHeader;
 import com.http.client.bo.HttpClientRequest;
 import com.http.client.enums.HttpRequestMethod;
@@ -139,7 +139,7 @@ public class HttpRequestContext {
     }
 
 
-    public List<From> getNameValueParams() {
+    public List<Form> getNameValueParams() {
 
         if (Objects.nonNull(param)){
             return param.getNameValueParams();

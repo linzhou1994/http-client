@@ -1,4 +1,4 @@
-package com.http.client.handler.analysis.method.impl;
+package com.http.client.handler.analysis.method.impl.body;
 
 import com.biz.tool.annotations.AnnotationUtil;
 import com.biz.tool.file.FileUtil;

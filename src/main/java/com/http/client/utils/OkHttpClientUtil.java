@@ -2,12 +2,11 @@ package com.http.client.utils;
 
 
 import com.http.client.context.body.FileBody;
-import com.http.client.context.form.From;
+import com.http.client.context.form.Form;
 import com.http.client.context.header.HttpHeader;
 import com.http.client.context.HttpRequestContext;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Call;
-import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.MultipartBuilder;
@@ -16,7 +15,6 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.*;
 import java.net.*;
@@ -133,8 +131,8 @@ public class OkHttpClientUtil {
                 .type(MultipartBuilder.FORM);
 
         List<FileBody> uploadFiles = context.getUploadFiles();
-        List<From> params = context.getNameValueParams();
-        for (From param : params) {
+        List<Form> params = context.getNameValueParams();
+        for (Form param : params) {
             builder.addFormDataPart(param.getName(), param.getValue());
         }
         if (CollectionUtils.isNotEmpty(uploadFiles)) {

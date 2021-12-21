@@ -1,13 +1,12 @@
 package com.http.client.bo;
 
 import com.http.client.context.body.FileBody;
-import com.http.client.context.form.From;
+import com.http.client.context.form.Form;
 import com.http.client.context.header.HttpHeader;
 import com.http.client.context.url.Url;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +21,7 @@ public class HttpClientRequest {
     /**
      * 表单格式的参数键值对
      */
-    private List<From> nameValueParams = new ArrayList<>();
+    private List<Form> nameValueParams = new ArrayList<>();
     /**
      * 自定义的请求头
      */
@@ -40,7 +39,7 @@ public class HttpClientRequest {
      */
     private Url httpUrl;
 
-    public void addNameValueParam(From nameValueParam) {
+    public void addNameValueParam(Form nameValueParam) {
         if (nameValueParam != null) {
             nameValueParams.add(nameValueParam);
         }
@@ -89,11 +88,11 @@ public class HttpClientRequest {
         }
     }
 
-    public List<From> getNameValueParams() {
+    public List<Form> getNameValueParams() {
         return nameValueParams;
     }
 
-    public void setNameValueParams(List<From> nameValueParams) {
+    public void setNameValueParams(List<Form> nameValueParams) {
         this.nameValueParams = nameValueParams;
     }
 
@@ -116,9 +115,9 @@ public class HttpClientRequest {
     public void addMethodParam(Object methodParam) {
         if (methodParam instanceof Collection) {
             addMethodParams((Collection<?>) methodParam);
-        } else if (methodParam instanceof From) {
+        } else if (methodParam instanceof Form) {
             //处理表单参数
-            addNameValueParam((From) methodParam);
+            addNameValueParam((Form) methodParam);
         } else if (methodParam instanceof FileBody) {
             //处理文件上传
             setUploadFile((FileBody) methodParam);

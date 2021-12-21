@@ -18,5 +18,5 @@ public @interface HttpParam {
      * 参数名称
      * @return
      */
-    String value();
+    String value() default "";
 }
