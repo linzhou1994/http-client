@@ -4,6 +4,7 @@ package com.http.client.registrar;
 import com.http.client.annotation.EnableHttpClient;
 import com.http.client.annotation.HttpClient;
 import com.http.client.annotation.HttpClientProxy;
+import com.http.client.constant.HttpClientConstant;
 import com.http.client.factorybean.HttpFactoryBean;
 import com.http.client.proxy.AbstractHttpProxy;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +36,7 @@ import java.util.Set;
  * @author linzhou
  */
 public class HttpClientRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
+
 
     private ResourceLoader resourceLoader;
 
@@ -110,7 +112,7 @@ public class HttpClientRegistrar implements ImportBeanDefinitionRegistrar, Resou
 
         Set<String> basePackages = new HashSet<>();
         if (attributes != null) {
-            for (String pkg : (String[]) attributes.get("basePackages")) {
+            for (String pkg : (String[]) attributes.get(HttpClientConstant.BASE_PACKAGES)) {
                 if (StringUtils.isNotBlank(pkg)) {
                     basePackages.add(pkg);
                 }

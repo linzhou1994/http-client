@@ -26,4 +26,8 @@ public class HttpClientConfig {
      * 全局默认的动态代理
      */
     private String baseUrl;
+    /**
+     * 默认的文件下载地址
+     */
+    private String defaultPath = "src/main/resources/httpClient";
 }

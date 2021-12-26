@@ -1,14 +1,17 @@
-package com.http.client.handler.http.result.impl;
+package com.http.client.interceptor.impl;
 
-import com.http.client.config.HttpClientConfig;
-import com.http.client.handler.http.result.HttpClientResultHandler;
+import com.http.client.context.HttpRequestContext;
+import com.http.client.interceptor.HttpClientInterceptor;
 import com.http.client.response.HttpClientResponse;
-import com.http.client.utils.HttpClientFileUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.http.client.utils.AutoCloseUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -43,20 +46,22 @@ import java.io.File;
  * //                 不见满街漂亮妹，哪个归得程序员?                      //
  * ////////////////////////////////////////////////////////////////////
  *
- * @date : 2021/12/12 15:53
+ * @date : 2021/12/26 18:03
  * @author: linzhou
- * @description : 文件返回处理
+ * @description : 流的自动关闭拦截器
  */
 @Component
-@Order(-1)
-public class FileHttpClientResultHandler implements HttpClientResultHandler {
-    @Autowired
-    private HttpClientConfig httpClientConfig;
+@Order(-1000)
+public class AutoCloseInterceptor implements HttpClientInterceptor {
     @Override
-    public Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception {
-        if (returnType == File.class) {
-            return HttpClientFileUtil.downFile(response,httpClientConfig.getDefaultPath());
-        }
+    public Object httpAfter(HttpClientResponse response, Object rlt) throws Exception {
+        AutoCloseUtil.closeAll();
+        return rlt;
+    }
+
+    @Override
+    public Object httpException(HttpRequestContext context, Throwable e) throws Exception {
+        AutoCloseUtil.closeAll();
         return null;
     }
 }

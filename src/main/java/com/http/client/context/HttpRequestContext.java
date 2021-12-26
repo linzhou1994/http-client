@@ -20,6 +20,7 @@ import java.util.Objects;
 
 /**
  * 请求上下文
+ *
  * @author linzhou
  */
 @Data
@@ -29,10 +30,7 @@ public class HttpRequestContext {
      * 执行方法对象
      */
     private Method method;
-    /**
-     * 方法上的注解对象
-     */
-    private HttpClient methodAnnotation;
+
     /**
      * 方法参数的上的注解对象集合
      */
@@ -55,31 +53,48 @@ public class HttpRequestContext {
      */
     private String httpUrl;
 
-    public HttpRequestContext(HttpFactoryBean httpFactoryBean, Object proxy, Method method, Object[] args) {
+    /**
+     * 类型
+     */
+    private Class<?> type;
+    /**
+     * 接口上的注解
+     */
+    private HttpClient interfaceHttpClient;
+    /**
+     * 方法上的注解对象
+     */
+    private HttpClient methodHttpClient;
+
+    public HttpRequestContext(HttpFactoryBean httpFactoryBean, Class<?> type, HttpClient interfaceHttpClient, Object proxy, Method method, Object[] args) {
         this.method = method;
         this.httpFactoryBean = httpFactoryBean;
+        this.proxy = proxy;
         this.args = args;
+        this.type = type;
+        this.interfaceHttpClient = interfaceHttpClient;
         //方法的注解
-        this.methodAnnotation = method.getAnnotation(HttpClient.class);
+        this.methodHttpClient = method.getAnnotation(HttpClient.class);
         //参数的注解
         this.parameterAnnotations = method.getParameterAnnotations();
         this.httpRequestMethod = getHttpRequestMethod();
+
     }
 
 
     public String getBaseUrl(String defaultBaseUrl) {
-        if (param.getHttpUrl() != null) {
+        if (Objects.nonNull(param.getHttpUrl())) {
             return param.getHttpUrl().getUrl();
         }
 
-        String url = methodAnnotation == null ? null : methodAnnotation.url();
+        String url = Objects.isNull(methodHttpClient) ? null : methodHttpClient.url();
         if (StringUtils.isBlank(url)) {
-            url = httpFactoryBean.getUrl();
+            url = interfaceHttpClient.url();
         }
         if (StringUtils.isBlank(url)) {
             if (StringUtils.isNotBlank(defaultBaseUrl)) {
                 url = defaultBaseUrl;
-            }else {
+            } else {
                 throw new IllegalArgumentException("url:error,url is blank");
             }
         }
@@ -88,19 +103,20 @@ public class HttpRequestContext {
         }
 
         //拼接类上的根路径
-        if (StringUtils.isNotBlank(httpFactoryBean.getBasePath())){
-            url =  UrlUtil.splicingUrl(url, httpFactoryBean.getBasePath());
+        String basePath = interfaceHttpClient.path();
+        if (StringUtils.isNotBlank(basePath)) {
+            url = UrlUtil.splicingUrl(url, basePath);
         }
         //如果方法没有注解,则取方法名称作为路径
         String path = "";
 
-        if (methodAnnotation != null) {
-            path = methodAnnotation.path();
-            if (StringUtils.isBlank(path) && methodAnnotation.pathMethodName()) {
+        if (Objects.nonNull(methodHttpClient)) {
+            path = methodHttpClient.path();
+            if (StringUtils.isBlank(path) && methodHttpClient.pathMethodName()) {
                 //如果path为空,但是注解标注使用方法名,则path使用方法名称
                 path = method.getName();
             }
-        } else if (httpFactoryBean.isPathMethodName()) {
+        } else if (interfaceHttpClient.pathMethodName()) {
             //如果类注解上标注了使用方法名称
             path = method.getName();
         }
@@ -126,12 +142,12 @@ public class HttpRequestContext {
             return httpRequestMethod;
         }
         //从方法注解中获取请求类型
-        HttpRequestMethod httpRequestMethod = methodAnnotation != null ? methodAnnotation.method() : null;
-        if (httpRequestMethod == null || httpRequestMethod == HttpRequestMethod.NULL) {
+        HttpRequestMethod httpRequestMethod = Objects.nonNull(methodHttpClient) ? methodHttpClient.method() : null;
+        if (Objects.isNull(httpRequestMethod) || Objects.equals(httpRequestMethod, HttpRequestMethod.NULL)) {
             //如果方法注解中没有获取到请求类型则从类注解中获取请求类型
-            httpRequestMethod = httpFactoryBean.getMethod();
+            httpRequestMethod = interfaceHttpClient.method();
         }
-        if (httpRequestMethod == HttpRequestMethod.NULL) {
+        if (Objects.equals(httpRequestMethod, HttpRequestMethod.NULL)) {
             //如果方法注解和类注解中都没有标注请求类型,则默认get
             httpRequestMethod = HttpRequestMethod.GET;
         }
@@ -141,28 +157,28 @@ public class HttpRequestContext {
 
     public List<Form> getNameValueParams() {
 
-        if (Objects.nonNull(param)){
+        if (Objects.nonNull(param)) {
             return param.getNameValueParams();
         }
         return Collections.emptyList();
     }
 
-    public List<FileBody> getUploadFiles(){
-        if (Objects.nonNull(param)){
+    public List<FileBody> getUploadFiles() {
+        if (Objects.nonNull(param)) {
             return param.getUploadFiles();
         }
         return Collections.emptyList();
     }
 
-    public HttpHeader getHttpHeader(){
-        if (Objects.nonNull(param)){
+    public HttpHeader getHttpHeader() {
+        if (Objects.nonNull(param)) {
             return param.getHttpHeader();
         }
         return null;
     }
 
-    public String getBody(){
-        if (Objects.nonNull(param)){
+    public String getBody() {
+        if (Objects.nonNull(param)) {
             return param.getBody();
         }
         return null;

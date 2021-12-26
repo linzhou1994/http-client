@@ -2,6 +2,7 @@ package com.http.client.proxy;
 
 
 import com.biz.tool.spring.SpringUtil;
+import com.http.client.annotation.HttpClient;
 import com.http.client.bo.HttpClientRequest;
 import com.http.client.config.HttpClientConfig;
 import com.http.client.context.HttpRequestContext;
@@ -35,6 +36,12 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
     private HttpFactoryBean httpFactoryBean;
     private List<HttpClientInterceptor> httpClientInterceptorList;
     private HttpClientConfig httpClientConfig;
+    /**
+     * 类型
+     */
+    private Class<?> type;
+
+    private HttpClient httpClient;
 
     @Override
     public <T> T newProxyInstance() {
@@ -45,24 +52,40 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-        HttpRequestContext context = new HttpRequestContext(httpFactoryBean, proxy, method, args);
-        //解析参数
-        analysisMethodParam(context);
-        //设置httpUrl
-        setHttpUrl(context);
-        //执行httpBefore方法
-        Object rlt = runHttpBefore(context);
-        if (Objects.nonNull(rlt)) {
-            return rlt;
+        HttpRequestContext context = new HttpRequestContext(httpFactoryBean, type, httpClient, proxy, method, args);
+        try {
+            //解析参数
+            analysisMethodParam(context);
+            //设置httpUrl
+            setHttpUrl(context);
+            //执行httpBefore方法
+            Object rlt = runHttpBefore(context);
+            if (Objects.nonNull(rlt)) {
+                return rlt;
+            }
+            HttpClientResponse response = doInvoke(context);
+            response.setContext(context);
+            rlt = HttpClientResultHandlerManager.getReturnObject(response);
+            //执行httpAfter方法处理返回数据
+            return runHttpAfter(response, rlt);
+        } catch (Throwable throwable) {
+            //执行异常拦截
+            Object rlt = runHttpException(context, throwable);
+            if (Objects.nonNull(rlt)) {
+                return rlt;
+            }
+            throw throwable;
         }
-        HttpClientResponse response = doInvoke(context);
-        response.setContext(context);
-        rlt = HttpClientResultHandlerManager.getReturnObject(response);
-        //执行httpAfter方法处理返回数据
-        return runHttpAfter(response,rlt);
     }
 
 
+    /**
+     * 子类实现http的实现方式,返回同一的请求结果
+     *
+     * @param context
+     * @return
+     * @throws Throwable
+     */
     protected abstract HttpClientResponse doInvoke(HttpRequestContext context) throws Throwable;
 
 
@@ -99,8 +122,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
                 Annotation[] parameterAnnotation = parameterAnnotations[i];
 
                 Object methodParam = AnalysisMethodParamHandlerManager.analysisMethodParam(arg, parameterAnnotation);
-//                result.addMethodParam(methodParam);
-                SetHttpParamHandlerManager.setHttpParam(result,methodParam);
+                SetHttpParamHandlerManager.setHttpParam(result, methodParam);
             }
         }
         context.setParam(result);
@@ -154,9 +176,23 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
      *
      * @param response
      */
-    private Object runHttpAfter(HttpClientResponse response,Object rlt) throws Exception {
+    private Object runHttpAfter(HttpClientResponse response, Object rlt) throws Exception {
         for (HttpClientInterceptor httpClientInterceptor : getHttpClientInterceptorList()) {
-            rlt = httpClientInterceptor.httpAfter(response,rlt);
+            rlt = httpClientInterceptor.httpAfter(response, rlt);
+        }
+        return rlt;
+    }
+
+    /**
+     * 执行httpAfter方法
+     *
+     * @param context
+     * @param e
+     */
+    private Object runHttpException(HttpRequestContext context, Throwable e) throws Exception {
+        Object rlt = null;
+        for (HttpClientInterceptor httpClientInterceptor : getHttpClientInterceptorList()) {
+            rlt = httpClientInterceptor.httpException(context, e);
         }
         return rlt;
     }
@@ -170,5 +206,11 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
             }
         }
         return httpClientInterceptorList;
+    }
+
+    public void setHttpFactoryBean(HttpFactoryBean httpFactoryBean) {
+        this.httpFactoryBean = httpFactoryBean;
+        this.type = httpFactoryBean.getType();
+        this.httpClient = type.getAnnotation(HttpClient.class);
     }
 }

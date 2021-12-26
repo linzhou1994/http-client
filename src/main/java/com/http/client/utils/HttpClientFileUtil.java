@@ -1,11 +1,10 @@
 package com.http.client.utils;
 
 import com.biz.tool.file.FileUtil;
+import com.http.client.constant.HttpClientConstant;
 import com.http.client.response.HttpClientResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.util.ResourceUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.Optional;
@@ -17,11 +16,7 @@ import java.util.Optional;
  * @Description
  */
 public class HttpClientFileUtil {
-    private static final String DEFAULT_PATH = "src/main/resources/httpClient";
 
-    public static File downFile(HttpClientResponse response) {
-        return downFile(response, DEFAULT_PATH);
-    }
 
     public static File downFile(HttpClientResponse response, String downPath) {
         String fileName = getFileName(response);
@@ -59,8 +54,8 @@ public class HttpClientFileUtil {
             return fileName;
         }
         StringBuilder stringBuilder = new StringBuilder(path);
-        if (path.lastIndexOf("/") != path.length()) {
-            stringBuilder.append("/");
+        if (path.lastIndexOf(HttpClientConstant.HTTP_SPLIT) != path.length()) {
+            stringBuilder.append(HttpClientConstant.HTTP_SPLIT);
         }
         return stringBuilder.append(fileName).toString();
     }
@@ -93,8 +88,8 @@ public class HttpClientFileUtil {
     public static String getUrlFileName(HttpClientResponse response) {
         return Optional.ofNullable(response)
                 .map(HttpClientResponse::getHttpUrl)
-                .map(o -> o.substring(o.lastIndexOf("/") + 1))
-                .orElse("HttpClientDownFile");
+                .map(o -> o.substring(o.lastIndexOf(HttpClientConstant.HTTP_SPLIT) + 1))
+                .orElse(HttpClientConstant.DEFAULT_HTTP_CLIENT_DOWN_FILE_NAME);
 
     }
 }

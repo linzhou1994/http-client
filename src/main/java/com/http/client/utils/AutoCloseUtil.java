@@ -1,14 +1,12 @@
-package com.http.client.handler.http.result.impl;
+package com.http.client.utils;
 
-import com.http.client.config.HttpClientConfig;
-import com.http.client.handler.http.result.HttpClientResultHandler;
-import com.http.client.response.HttpClientResponse;
-import com.http.client.utils.HttpClientFileUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
+import org.apache.commons.collections4.CollectionUtils;
 
-import java.io.File;
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -43,20 +41,39 @@ import java.io.File;
  * //                 不见满街漂亮妹，哪个归得程序员?                      //
  * ////////////////////////////////////////////////////////////////////
  *
- * @date : 2021/12/12 15:53
+ * @date : 2021/12/26 18:30
  * @author: linzhou
- * @description : 文件返回处理
+ * @description : AutoCloseUtil
  */
-@Component
-@Order(-1)
-public class FileHttpClientResultHandler implements HttpClientResultHandler {
-    @Autowired
-    private HttpClientConfig httpClientConfig;
-    @Override
-    public Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception {
-        if (returnType == File.class) {
-            return HttpClientFileUtil.downFile(response,httpClientConfig.getDefaultPath());
+public class AutoCloseUtil {
+
+    private static final ThreadLocal<List<Closeable>> THREAD_LOCAL = new ThreadLocal<List<Closeable>>(){
+        @Override
+        protected List<Closeable> initialValue() {
+            return new ArrayList<>();
         }
-        return null;
+    };
+
+    public static void addCloseable(Closeable closeable){
+        THREAD_LOCAL.get().add(closeable);
+    }
+
+    public static void closeAll(){
+        List<Closeable> closeables = THREAD_LOCAL.get();
+        if (CollectionUtils.isNotEmpty(closeables)) {
+            for (Closeable closeable : closeables) {
+                try {
+                    if (Objects.nonNull(closeable)) {
+                        closeable.close();
+                    }
+                } catch (IOException e) {
+                }
+            }
+        }
+        clear();
+    }
+
+    public static void clear(){
+        THREAD_LOCAL.get().clear();
     }
 }

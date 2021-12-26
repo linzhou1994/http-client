@@ -103,33 +103,4 @@ public class HttpClientRequest {
     public void setHttpUrl(Url httpUrl) {
         this.httpUrl = httpUrl;
     }
-
-    public void addMethodParams(Collection<?> methodParams) {
-        if (CollectionUtils.isNotEmpty(methodParams)) {
-            for (Object methodParam : methodParams) {
-                addMethodParam(methodParam);
-            }
-        }
-    }
-
-    public void addMethodParam(Object methodParam) {
-        if (methodParam instanceof Collection) {
-            addMethodParams((Collection<?>) methodParam);
-        } else if (methodParam instanceof Form) {
-            //处理表单参数
-            addNameValueParam((Form) methodParam);
-        } else if (methodParam instanceof FileBody) {
-            //处理文件上传
-            setUploadFile((FileBody) methodParam);
-        } else if (methodParam instanceof HttpHeader) {
-            //设置请求头
-            httpHeader.addHeader((HttpHeader) methodParam);
-        } else if (methodParam instanceof Url) {
-            //处理自定义url
-            setHttpUrl((Url) methodParam);
-        } else {
-            //处理body
-            setBody((String) methodParam);
-        }
-    }
 }

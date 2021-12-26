@@ -1,7 +1,7 @@
 package com.http.client.response;
 
-import com.http.client.context.header.HttpHeader;
 import com.http.client.context.HttpRequestContext;
+import com.http.client.context.header.HttpHeader;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Objects;
 
 /**
  * @author linzhou
@@ -21,7 +22,7 @@ import java.nio.charset.Charset;
 public class HttpClientResponse {
     private int code;
     private final Charset charset;
-    private HttpHeader httpHeader = new HttpHeader();
+    private HttpHeader httpHeader;
     private HttpRequestContext context;
     private InputStream inputStream;
 
@@ -44,7 +45,7 @@ public class HttpClientResponse {
     }
 
     public String getHeader(String name) {
-        return httpHeader.getHeader(name, null);
+        return getHttpHeader().getHeader(name, null);
     }
 
     public String getHttpUrl() {
@@ -53,5 +54,12 @@ public class HttpClientResponse {
 
     public boolean isSuccessful() {
         return this.code >= 200 && this.code < 300;
+    }
+
+    public HttpHeader getHttpHeader() {
+        if (Objects.isNull(this.httpHeader)){
+            this.httpHeader = new HttpHeader();
+        }
+        return httpHeader;
     }
 }

@@ -1,14 +1,4 @@
-package com.http.client.handler.http.result.impl;
-
-import com.http.client.config.HttpClientConfig;
-import com.http.client.handler.http.result.HttpClientResultHandler;
-import com.http.client.response.HttpClientResponse;
-import com.http.client.utils.HttpClientFileUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
-import java.io.File;
+package com.http.client.constant;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -43,20 +33,35 @@ import java.io.File;
  * //                 不见满街漂亮妹，哪个归得程序员?                      //
  * ////////////////////////////////////////////////////////////////////
  *
- * @date : 2021/12/12 15:53
+ * @date : 2021/12/26 17:38
  * @author: linzhou
- * @description : 文件返回处理
+ * @description : HttpClientConstant
  */
-@Component
-@Order(-1)
-public class FileHttpClientResultHandler implements HttpClientResultHandler {
-    @Autowired
-    private HttpClientConfig httpClientConfig;
-    @Override
-    public Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception {
-        if (returnType == File.class) {
-            return HttpClientFileUtil.downFile(response,httpClientConfig.getDefaultPath());
-        }
-        return null;
-    }
+public class HttpClientConstant {
+    /**
+     * 启动注解上设置需要扫描的httpclient的包名
+     *
+     * @see com.http.client.annotation.EnableHttpClient
+     */
+    public static final String BASE_PACKAGES = "basePackages";
+
+    /**
+     * http的分隔符
+     */
+    public static final String HTTP_SPLIT = "/";
+    /**
+     * URL带参数的字符
+     */
+    public static final String URL_SPLIT_PARAM = "?";
+    /**
+     * URL参数的分隔符
+     */
+    public static final String URL_PARAM_SPLIT = "&";
+
+    /**
+     * 默认的http文件下载的文件名称
+     */
+    public static final String DEFAULT_HTTP_CLIENT_DOWN_FILE_NAME = "HttpClientDownFile";
+
+
 }

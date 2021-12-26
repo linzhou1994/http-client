@@ -6,6 +6,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import static com.http.client.constant.HttpClientConstant.*;
+
 /**
  * url 工具类
  * @author linzhou
@@ -24,18 +26,18 @@ public class UrlUtil {
         if (nameValueParams == null || nameValueParams.isEmpty()) {
             return url;
         }
-        if (!url.contains("?")) {
-            url = url + "?";
+        if (!url.contains(URL_SPLIT_PARAM)) {
+            url = url + URL_SPLIT_PARAM;
         }
         int lastIndex = url.length() - 1;
-        if (url.lastIndexOf("?") != lastIndex && url.charAt(lastIndex) != '&') {
+        if (url.lastIndexOf(URL_SPLIT_PARAM) != lastIndex && url.charAt(lastIndex) != URL_PARAM_SPLIT.charAt(0)) {
             //如果最后一位不是?说明url中已经带了参数,但是最后一位不是&,补一个
-            url = url + "&";
+            url = url + URL_PARAM_SPLIT;
         }
 
         StringBuilder sb = new StringBuilder();
         for (Form nameValueParam : nameValueParams) {
-            sb.append(nameValueParam.getName()).append("=").append(nameValueParam.getValue()).append("&");
+            sb.append(nameValueParam.getName()).append("=").append(nameValueParam.getValue()).append(URL_PARAM_SPLIT);
         }
 
         return url + sb.toString();
@@ -50,7 +52,7 @@ public class UrlUtil {
      * @return
      */
     public static String splicingUrl(String url, String path) {
-        String separate = "/";
+        String separate = HTTP_SPLIT;
         if (url.lastIndexOf(separate) != url.length() - 1 && path.indexOf(separate) != 0) {
             //如果url最后没有"/",并且path也没有,则添加一个"/"
             url += separate;

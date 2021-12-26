@@ -19,7 +19,7 @@ import java.lang.annotation.*;
 public @interface EnableHttpClient {
 
     /**
-     * 设置httpclient的包名
+     * 设置需要扫描的httpclient的包名
      *
      * @return
      */
