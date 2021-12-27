@@ -53,6 +53,10 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
         HttpRequestContext context = new HttpRequestContext(httpFactoryBean, type, httpClient, proxy, method, args);
+        return sendHttp(context);
+    }
+
+    private Object sendHttp(HttpRequestContext context) throws Throwable {
         try {
             //解析参数
             analysisMethodParam(context);
