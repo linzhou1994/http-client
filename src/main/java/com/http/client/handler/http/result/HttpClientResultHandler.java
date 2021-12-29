@@ -2,8 +2,6 @@ package com.http.client.handler.http.result;
 
 import com.http.client.response.HttpClientResponse;
 
-import java.lang.annotation.Annotation;
-
 /**
  * ////////////////////////////////////////////////////////////////////
  * //                          _ooOoo_                               //
@@ -49,5 +47,5 @@ public interface HttpClientResultHandler {
      * @param response http请求结果
      * @return
      */
-    Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception;
+    Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception;
 }

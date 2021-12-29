@@ -31,6 +31,7 @@ public class HttpClientTest extends BaseTest {
         String rlt = httpTestClient.postLogin(p);
         log.info("rlt1:" + rlt);
     }
+
     /**
      * post 请求
      */
@@ -39,6 +40,7 @@ public class HttpClientTest extends BaseTest {
         double rlt = httpTestClient.getDouble();
         log.info("rlt1:" + rlt);
     }
+
     /**
      * get 请求
      */
@@ -104,6 +106,7 @@ public class HttpClientTest extends BaseTest {
 
     /**
      * 文件下载
+     *
      * @throws IOException
      */
     @Test

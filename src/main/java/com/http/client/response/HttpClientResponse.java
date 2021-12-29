@@ -2,64 +2,103 @@ package com.http.client.response;
 
 import com.http.client.context.HttpRequestContext;
 import com.http.client.context.header.HttpHeader;
-import lombok.Builder;
-import lombok.Data;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Objects;
 
 /**
- * @author linzhou
- * @ClassName HttpClientResponse.java
- * @createTime 2021年12月08日 15:40:00
- * @Description
+ * ////////////////////////////////////////////////////////////////////
+ * //                          _ooOoo_                               //
+ * //                         o8888888o                              //
+ * //                         88" . "88                              //
+ * //                         (| ^_^ |)                              //
+ * //                         O\  =  /O                              //
+ * //                      ____/`---'\____                           //
+ * //                    .'  \\|     |//  `.                         //
+ * //                   /  \\|||  :  |||//  \                        //
+ * //                  /  _||||| -:- |||||-  \                       //
+ * //                  |   | \\\  -  /// |   |                       //
+ * //                  | \_|  ''\---/''  |   |                       //
+ * //                  \  .-\__  `-`  ___/-. /                       //
+ * //                ___`. .'  /--.--\  `. . ___                     //
+ * //              ."" '<  `.___\_<|>_/___.'  >'"".                  //
+ * //            | | :  `- \`.;`\ _ /`;.`/ - ` : | |                 //
+ * //            \  \ `-.   \_ __\ /__ _/   .-` /  /                 //
+ * //      ========`-.____`-.___\_____/___.-`____.-'========         //
+ * //                           `=---='                              //
+ * //      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        //
+ * //         佛祖保佑           永无BUG           永不修改              //
+ * //          佛曰:                                                  //
+ * //                 写字楼里写字间，写字间里程序员;                      //
+ * //                 程序人员写程序，又拿程序换酒钱.                      //
+ * //                 酒醒只在网上坐，酒醉还来网下眠;                      //
+ * //                 酒醉酒醒日复日，网上网下年复年.                      //
+ * //                 但愿老死电脑间，不愿鞠躬老板前;                      //
+ * //                 奔驰宝马贵者趣，公交自行程序员.                      //
+ * //                 别人笑我忒疯癫，我笑自己命太贱;                      //
+ * //                 不见满街漂亮妹，哪个归得程序员?                      //
+ * ////////////////////////////////////////////////////////////////////
+ *
+ * @date : 2021/12/29 21:02
+ * @author: linzhou
+ * @description : HttpClientResponse
  */
-@Data
-@Builder
-public class HttpClientResponse {
-    private int code;
-    private final Charset charset;
-    private HttpHeader httpHeader;
-    private HttpRequestContext context;
-    private InputStream inputStream;
+public interface HttpClientResponse {
 
-    private Charset charset() {
-        return charset != null ? charset : Charset.forName("UTF-8");
-    }
+    int getCode();
 
-    public String string() throws IOException {
-        return new String(getByte(), this.charset().name());
-    }
+    /**
+     * 请求是否成功
+     *
+     * @return
+     */
+    boolean isSuccessful();
 
-    public byte[] getByte() throws IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        byte[] buffer = new byte[4096];
-        int n = 0;
-        while (-1 != (n = inputStream.read(buffer))) {
-            output.write(buffer, 0, n);
-        }
-        return output.toByteArray();
-    }
+    /**
+     * 获取请求内容
+     *
+     * @return
+     * @throws IOException
+     */
+    String result() throws IOException;
 
-    public String getHeader(String name) {
-        return getHttpHeader().getHeader(name, null);
-    }
+    /**
+     * 获取指定ResponseHeard
+     *
+     * @param name
+     * @return
+     */
+    String getResponseHeard(String name);
 
-    public String getHttpUrl() {
-        return context.getHttpUrl();
-    }
+    /**
+     * 获取所有的ResponseHeard
+     *
+     * @return
+     */
+    HttpHeader getResponseHeard();
 
-    public boolean isSuccessful() {
-        return this.code >= 200 && this.code < 300;
-    }
+    /**
+     * 获取请求地址
+     *
+     * @return
+     */
+    String getHttpUrl();
 
-    public HttpHeader getHttpHeader() {
-        if (Objects.isNull(this.httpHeader)){
-            this.httpHeader = new HttpHeader();
-        }
-        return httpHeader;
-    }
+    /**
+     * 获取请求上下文
+     *
+     * @return
+     */
+    HttpRequestContext getContext();
+
+    void setContext(HttpRequestContext context);
+
+    /**
+     * 获取返回流
+     *
+     * @return
+     */
+    InputStream getInputStream();
+
+
 }

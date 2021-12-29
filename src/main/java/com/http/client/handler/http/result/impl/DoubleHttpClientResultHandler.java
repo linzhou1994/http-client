@@ -46,7 +46,7 @@ public class DoubleHttpClientResultHandler implements HttpClientResultHandler {
     @Override
     public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
         if (returnType == Double.class || returnType == double.class) {
-            String result = response.string();
+            String result = response.result();
             return Double.parseDouble(result);
         }
         return null;

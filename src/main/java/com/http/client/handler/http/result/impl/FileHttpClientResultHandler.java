@@ -53,7 +53,7 @@ public class FileHttpClientResultHandler implements HttpClientResultHandler {
     @Autowired
     private HttpClientConfig httpClientConfig;
     @Override
-    public Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception {
+    public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
         if (returnType == File.class) {
             return HttpClientFileUtil.downFile(response,httpClientConfig.getDefaultPath());
         }

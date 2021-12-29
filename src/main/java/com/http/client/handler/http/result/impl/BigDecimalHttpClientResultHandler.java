@@ -48,7 +48,7 @@ public class BigDecimalHttpClientResultHandler implements HttpClientResultHandle
     @Override
     public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
         if (returnType == BigDecimal.class) {
-            String result = response.string();
+            String result = response.result();
             return new BigDecimal(result);
         }
         return null;

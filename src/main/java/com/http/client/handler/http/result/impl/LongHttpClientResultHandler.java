@@ -46,7 +46,7 @@ public class LongHttpClientResultHandler implements HttpClientResultHandler {
     @Override
     public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
         if (returnType == Long.class||returnType == long.class) {
-            String result = response.string();
+            String result = response.result();
             return Long.parseLong(result);
         }
         return null;
