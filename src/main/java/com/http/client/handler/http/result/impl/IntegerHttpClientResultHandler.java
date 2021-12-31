@@ -46,7 +46,7 @@ public class IntegerHttpClientResultHandler implements HttpClientResultHandler {
     @Override
     public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
         if (returnType == Integer.class||returnType == int.class) {
-            String result = response.string();
+            String result = response.result();
             return Integer.parseInt(result);
         }
         return null;

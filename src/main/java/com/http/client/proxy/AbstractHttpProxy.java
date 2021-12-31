@@ -13,7 +13,7 @@ import com.http.client.handler.analysis.method.AnalysisMethodParamHandlerManager
 import com.http.client.handler.http.request.SetHttpParamHandlerManager;
 import com.http.client.handler.http.result.HttpClientResultHandlerManager;
 import com.http.client.interceptor.HttpClientInterceptor;
-import com.http.client.response.HttpClientResponse;
+import com.http.client.response.BaseHttpClientResponse;
 import com.http.client.utils.UrlUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -60,14 +60,14 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
         try {
             //解析参数
             analysisMethodParam(context);
-            //设置httpUrl
-            setHttpUrl(context);
             //执行httpBefore方法
             Object rlt = runHttpBefore(context);
+            //设置httpUrl
+            setHttpUrl(context);
             if (Objects.nonNull(rlt)) {
                 return rlt;
             }
-            HttpClientResponse response = doInvoke(context);
+            BaseHttpClientResponse response = doInvoke(context);
             response.setContext(context);
             rlt = HttpClientResultHandlerManager.getReturnObject(response);
             //执行httpAfter方法处理返回数据
@@ -90,7 +90,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
      * @return
      * @throws Throwable
      */
-    protected abstract HttpClientResponse doInvoke(HttpRequestContext context) throws Throwable;
+    protected abstract BaseHttpClientResponse doInvoke(HttpRequestContext context) throws Throwable;
 
 
     /**
@@ -180,7 +180,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
      *
      * @param response
      */
-    private Object runHttpAfter(HttpClientResponse response, Object rlt) throws Exception {
+    private Object runHttpAfter(BaseHttpClientResponse response, Object rlt) throws Exception {
         for (HttpClientInterceptor httpClientInterceptor : getHttpClientInterceptorList()) {
             rlt = httpClientInterceptor.httpAfter(response, rlt);
         }

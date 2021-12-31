@@ -47,9 +47,9 @@ import org.springframework.stereotype.Component;
 @Order(-10)
 public class SuccessfulHttpClientResultHandler implements HttpClientResultHandler {
     @Override
-    public Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception {
+    public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
         if (!response.isSuccessful()) {
-            throw new HttpErrorException(response.string());
+            throw new HttpErrorException(response.result());
         }
         return null;
     }

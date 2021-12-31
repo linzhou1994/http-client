@@ -1,7 +1,7 @@
 package com.http.client.handler.http.result;
 
 import com.biz.tool.spring.SpringUtil;
-import com.http.client.response.HttpClientResponse;
+import com.http.client.response.BaseHttpClientResponse;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public class HttpClientResultHandlerManager {
 
     private static List<HttpClientResultHandler> httpClientResultHandlers;
 
-    public static Object getReturnObject(HttpClientResponse response) throws Exception {
+    public static Object getReturnObject(BaseHttpClientResponse response) throws Exception {
 
         List<HttpClientResultHandler> httpClientResultHandlers = getAnalysisMethodParamHandlers();
         Class<?> returnType = response.getContext().getMethod().getReturnType();

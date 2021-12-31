@@ -46,7 +46,7 @@ public class StringHttpClientResultHandler implements HttpClientResultHandler {
     @Override
     public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
         if (returnType == String.class) {
-            return response.string();
+            return response.result();
         }
         return null;
     }

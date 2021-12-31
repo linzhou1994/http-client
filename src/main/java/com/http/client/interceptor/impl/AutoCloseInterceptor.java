@@ -2,16 +2,10 @@ package com.http.client.interceptor.impl;
 
 import com.http.client.context.HttpRequestContext;
 import com.http.client.interceptor.HttpClientInterceptor;
-import com.http.client.response.HttpClientResponse;
+import com.http.client.response.BaseHttpClientResponse;
 import com.http.client.utils.AutoCloseUtil;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -54,7 +48,7 @@ import java.util.Objects;
 @Order(-1000)
 public class AutoCloseInterceptor implements HttpClientInterceptor {
     @Override
-    public Object httpAfter(HttpClientResponse response, Object rlt) throws Exception {
+    public Object httpAfter(BaseHttpClientResponse response, Object rlt) throws Exception {
         AutoCloseUtil.closeAll();
         return rlt;
     }

@@ -2,6 +2,7 @@ package com.http.client.utils;
 
 import com.biz.tool.file.FileUtil;
 import com.http.client.constant.HttpClientConstant;
+import com.http.client.response.BaseHttpClientResponse;
 import com.http.client.response.HttpClientResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.mock.web.MockMultipartFile;
@@ -66,7 +67,7 @@ public class HttpClientFileUtil {
      * Content-Disposition: attachment; filename*="UTF-8''%E6%9B%BF%E6%8D%A2%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf"
      */
     private static String getHeaderFileName(HttpClientResponse response) {
-        String dispositionHeader = response.getHeader("Content-Disposition");
+        String dispositionHeader = response.getResponseHeard("Content-Disposition");
         if (StringUtils.isNotBlank(dispositionHeader)) {
             String[] strings = dispositionHeader.split(";");
             if (strings.length > 1) {

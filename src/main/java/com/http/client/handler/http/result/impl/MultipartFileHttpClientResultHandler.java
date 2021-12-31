@@ -48,7 +48,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Order(-1)
 public class MultipartFileHttpClientResultHandler implements HttpClientResultHandler {
     @Override
-    public Object getReturnObject(HttpClientResponse response,Class<?> returnType) throws Exception {
+    public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
         if (returnType == MultipartFile.class) {
             return HttpClientFileUtil.getMockMultipartFile(response);
         }

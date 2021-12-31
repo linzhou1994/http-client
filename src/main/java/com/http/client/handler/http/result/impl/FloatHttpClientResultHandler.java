@@ -46,7 +46,7 @@ public class FloatHttpClientResultHandler implements HttpClientResultHandler {
     @Override
     public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
         if (returnType == Float.class || returnType == float.class) {
-            String result = response.string();
+            String result = response.result();
             return Float.parseFloat(result);
         }
         return null;
