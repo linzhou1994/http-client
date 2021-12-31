@@ -25,12 +25,10 @@ import java.util.Set;
 @Component
 @Order
 public class ObjectHttpClientResultHandler implements HttpClientResultHandler {
-    private static final Logger logger = LoggerFactory.getLogger(ObjectHttpClientResultHandler.class);
 
     @Override
     public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
         String result = response.result();
-        logger.info("url:{},result:{}", response.getContext().getHttpUrl(), result);
         if (returnType == String.class){
             return result;
         }

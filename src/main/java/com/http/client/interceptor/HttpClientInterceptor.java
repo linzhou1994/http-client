@@ -1,7 +1,7 @@
 package com.http.client.interceptor;
 
-import com.http.client.response.BaseHttpClientResponse;
 import com.http.client.context.HttpRequestContext;
+import com.http.client.response.HttpClientResponse;
 
 /**
  * @author linzhou
@@ -28,7 +28,7 @@ public interface HttpClientInterceptor {
      * @param rlt      原本要返回的值
      * @return 最终要返回值
      */
-    default Object httpAfter(BaseHttpClientResponse response, Object rlt) throws Exception {
+    default Object httpAfter(HttpClientResponse response, Object rlt) throws Exception {
         return rlt;
     }
 

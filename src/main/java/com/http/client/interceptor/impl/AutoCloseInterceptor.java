@@ -2,7 +2,7 @@ package com.http.client.interceptor.impl;
 
 import com.http.client.context.HttpRequestContext;
 import com.http.client.interceptor.HttpClientInterceptor;
-import com.http.client.response.BaseHttpClientResponse;
+import com.http.client.response.HttpClientResponse;
 import com.http.client.utils.AutoCloseUtil;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -48,7 +48,7 @@ import org.springframework.stereotype.Component;
 @Order(-1000)
 public class AutoCloseInterceptor implements HttpClientInterceptor {
     @Override
-    public Object httpAfter(BaseHttpClientResponse response, Object rlt) throws Exception {
+    public Object httpAfter(HttpClientResponse response, Object rlt) throws Exception {
         AutoCloseUtil.closeAll();
         return rlt;
     }
