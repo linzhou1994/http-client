@@ -1,22 +1,20 @@
 package com.http.client.handler.http.result.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.http.client.annotation.JsonToObject;
 import com.http.client.handler.http.result.HttpClientResultHandler;
 import com.http.client.response.HttpClientResponse;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author linzhou
@@ -32,43 +30,99 @@ public class ObjectHttpClientResultHandler implements HttpClientResultHandler {
     @Override
     public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {
         String result = response.result();
-        logger.info("url:{},result:{}", response.getHttpUrl(), result);
-        JSONObject jsonObject = JSON.parseObject(result);
-        toObject(jsonObject, returnType);
+        logger.info("url:{},result:{}", response.getContext().getHttpUrl(), result);
+        if (returnType == String.class){
+            return result;
+        }
+        Object object =toJson(result);
+        if (!(object instanceof JSON)){
+            //无法转成json,则不处理
+            return null;
+        }
+        JSON jsonObject = (JSON) object;
+        toObject(jsonObject);
         Type genericReturnType = response.getContext().getMethod().getGenericReturnType();
         return jsonObject.toJavaObject(genericReturnType);
     }
 
-    private void toObject(JSONObject jsonObject, Class<?> returnType) {
-        List<String> fieldNames = getFieldNames(returnType);
-        if (CollectionUtils.isEmpty(fieldNames)) {
+    private void toObject(JSON json) {
+        if (Objects.isNull(json)) {
             return;
         }
-        for (String fieldName : fieldNames) {
-            Object object = jsonObject.get(fieldName);
-            if (object instanceof String) {
-                tryToObject(jsonObject, fieldName, (String) object);
+        if (json instanceof JSONObject) {
+            toObject((JSONObject) json);
+        } else {
+            toObject((JSONArray) json);
+        }
+
+    }
+
+    private void toObject(JSONArray jsonArray) {
+        if (Objects.isNull(jsonArray) || jsonArray.isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < jsonArray.size(); i++) {
+            Object value = jsonArray.get(i);
+            if (value instanceof String) {
+                value = toJson((String) value);
+                jsonArray.set(i,value);
+            }
+
+            if (value instanceof JSON) {
+                toObject((JSON) value);
             }
         }
     }
 
-    private void tryToObject(JSONObject jsonObject, String fieldName, String s) {
+
+    private void toObject(JSONObject jsonObject) {
+        if (Objects.isNull(jsonObject) || jsonObject.isEmpty()) {
+            return;
+        }
+        Set<Map.Entry<String, Object>> entrySet = jsonObject.entrySet();
+        for (Map.Entry<String, Object> entry : entrySet) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (Objects.isNull(value)) {
+                continue;
+            }
+            if (value instanceof String) {
+                value = tryToObject(jsonObject, key, (String) value);
+            }
+
+            if (value instanceof JSON) {
+                toObject((JSON) value);
+            }
+        }
+    }
+
+    private Object tryToObject(JSONObject jsonObject, String fieldName, String s) {
         try {
-            jsonObject.put(fieldName, JSON.parse(s));
+            Object parse = toJson(s);
+            jsonObject.put(fieldName, parse);
+            return parse;
         } catch (Exception e) {
             e.printStackTrace();
+            return s;
         }
     }
 
-    public List<String> getFieldNames(Class<?> returnType) {
-        List<String> rlt = new ArrayList<>();
-        for (Field declaredField : returnType.getDeclaredFields()) {
-            if (declaredField.isAnnotationPresent(JsonToObject.class)) {
-                JSONField annotation = declaredField.getAnnotation(JSONField.class);
-                String name = Objects.isNull(annotation) ? declaredField.getName() : annotation.name();
-                rlt.add(name);
-            }
+    private Object toJson(String value) {
+        try {
+            return isJson(value) ? JSON.parse(value) : value;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return value;
         }
-        return rlt;
+    }
+
+    private boolean isJson(String value) {
+        if (StringUtils.isBlank(value)) {
+            return false;
+        }
+        char firstChar = value.charAt(0);
+        char endChar = value.charAt(value.length() - 1);
+        return (firstChar == '{' && endChar == '}') || (firstChar == '[' && endChar == ']');
     }
 }
