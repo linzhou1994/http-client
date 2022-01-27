@@ -142,7 +142,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
             if (Objects.isNull(context.getParam()) || Objects.isNull(context.getHttpRequestMethod())) {
                 throw new ParamException("数据异常,methodParamResult or httpRequestMethod is null");
             }
-            String baseUrl = context.getBaseUrl(getConfig().getBaseUrl());
+            String baseUrl = context.getUrl(getConfig().getBaseUrl());
             if (isGet(context)
                     || context.isPostEntity()) {
                 context.setHttpUrl(UrlUtil.getParamUrl(baseUrl, context.getNameValueParams()));

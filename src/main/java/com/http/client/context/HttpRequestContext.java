@@ -82,25 +82,12 @@ public class HttpRequestContext {
     }
 
 
-    public String getBaseUrl(String defaultBaseUrl) {
+    public String getUrl(String defaultBaseUrl) {
         if (Objects.nonNull(param.getHttpUrl())) {
             return param.getHttpUrl().getUrl();
         }
 
-        String url = Objects.isNull(methodHttpClient) ? null : methodHttpClient.url();
-        if (StringUtils.isBlank(url)) {
-            url = interfaceHttpClient.url();
-        }
-        if (StringUtils.isBlank(url)) {
-            if (StringUtils.isNotBlank(defaultBaseUrl)) {
-                url = defaultBaseUrl;
-            } else {
-                throw new IllegalArgumentException("url:error,url is blank");
-            }
-        }
-        if (!url.contains("://")) {
-            url = "https://" + url;
-        }
+        String url = getBasePath(defaultBaseUrl);
 
         //拼接类上的根路径
         String basePath = interfaceHttpClient.path();
@@ -121,6 +108,24 @@ public class HttpRequestContext {
             path = method.getName();
         }
         return UrlUtil.splicingUrl(url, path);
+    }
+
+    private String getBasePath(String defaultBaseUrl) {
+        String url = Objects.isNull(methodHttpClient) ? null : methodHttpClient.url();
+        if (StringUtils.isBlank(url)) {
+            url = interfaceHttpClient.url();
+        }
+        if (StringUtils.isBlank(url)) {
+            if (StringUtils.isNotBlank(defaultBaseUrl)) {
+                url = defaultBaseUrl;
+            } else {
+                throw new IllegalArgumentException("url:error,url is blank");
+            }
+        }
+        if (!url.contains("://")) {
+            url = "https://" + url;
+        }
+        return url;
     }
 
 
