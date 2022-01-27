@@ -41,7 +41,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
      */
     private Class<?> type;
 
-    private HttpClient httpClient;
+    private HttpClient interfaceHttpClient;
 
     @Override
     public <T> T newProxyInstance() {
@@ -52,7 +52,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-        HttpRequestContext context = new HttpRequestContext(httpFactoryBean, type, httpClient, proxy, method, args);
+        HttpRequestContext context = new HttpRequestContext(httpFactoryBean, type, interfaceHttpClient, proxy, method, args);
         return sendHttp(context);
     }
 
@@ -215,6 +215,6 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
     public void setHttpFactoryBean(HttpFactoryBean httpFactoryBean) {
         this.httpFactoryBean = httpFactoryBean;
         this.type = httpFactoryBean.getType();
-        this.httpClient = type.getAnnotation(HttpClient.class);
+        this.interfaceHttpClient = type.getAnnotation(HttpClient.class);
     }
 }
