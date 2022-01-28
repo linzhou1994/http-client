@@ -111,9 +111,9 @@ public class HttpRequestContext {
     }
 
     private String getBasePath(String defaultBaseUrl) {
-        String url = Objects.isNull(methodHttpClient) ? null : methodHttpClient.url();
+        String url = Objects.isNull(methodHttpClient) ? null : UrlUtil.getUrl(methodHttpClient);
         if (StringUtils.isBlank(url)) {
-            url = interfaceHttpClient.url();
+            url = UrlUtil.getUrl(interfaceHttpClient);
         }
         if (StringUtils.isBlank(url)) {
             if (StringUtils.isNotBlank(defaultBaseUrl)) {

@@ -15,8 +15,12 @@ import java.nio.charset.StandardCharsets;
 @Log4j2
 public class HttpClientTest extends BaseTest {
 
+    public static final String PROPERTY_URL = "http.client.property-url";
+
     @Autowired
     private HttpTestClient httpTestClient;
+    @Autowired
+    private HttpPropertyTestClient httpPropertyTestClient;
     @Autowired
     private DownloadFileClient httpDownloadClient;
 
@@ -28,7 +32,9 @@ public class HttpClientTest extends BaseTest {
         LoginParam p = new LoginParam();
         p.setPassword("12345678");
         p.setName("httpClient");
-        String rlt = httpTestClient.postLogin(p);
+        String rlt = httpPropertyTestClient.postLogin(p);
+        log.info("rlt1:" + rlt);
+         rlt = httpTestClient.postLogin(p);
         log.info("rlt1:" + rlt);
     }
 

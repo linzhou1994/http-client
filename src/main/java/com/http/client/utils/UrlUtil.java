@@ -1,15 +1,19 @@
 package com.http.client.utils;
 
+import com.http.client.annotation.HttpClient;
 import com.http.client.context.form.Form;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
 import static com.http.client.constant.HttpClientConstant.*;
 
 /**
  * url 工具类
+ *
  * @author linzhou
  */
 public class UrlUtil {
@@ -68,5 +72,24 @@ public class UrlUtil {
             throw new IllegalArgumentException("url:格式错误" + url, e);
         }
         return url;
+    }
+
+    public static String getUrl(HttpClient httpClient) {
+        if (Objects.isNull(httpClient)) {
+            return null;
+        }
+        String url = httpClient.url();
+        if (StringUtils.isBlank(url)) {
+            return null;
+        }
+
+        try {
+            //从配置文件中获取数据
+            String propertyUrl = PropertyUtil.getProperty(url);
+            return StringUtils.isBlank(propertyUrl) ? url : propertyUrl;
+        } catch (Exception e) {
+            //如果配置文件拿不到,则用原来的
+            return url;
+        }
     }
 }
