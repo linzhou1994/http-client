@@ -10,6 +10,7 @@ import com.http.client.enums.HttpRequestMethod;
 import com.http.client.exception.ParamException;
 import com.http.client.factorybean.HttpFactoryBean;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandlerManager;
+import com.http.client.handler.analysis.url.AnalysisUrlHandlerManager;
 import com.http.client.handler.http.request.SetHttpParamHandlerManager;
 import com.http.client.handler.http.result.HttpClientResultHandlerManager;
 import com.http.client.interceptor.HttpClientInterceptor;
@@ -35,7 +36,6 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
 
     private HttpFactoryBean httpFactoryBean;
     private List<HttpClientInterceptor> httpClientInterceptorList;
-    private HttpClientConfig httpClientConfig;
     /**
      * 类型
      */
@@ -137,26 +137,9 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
      *
      * @return
      */
-    public void setHttpUrl(HttpRequestContext context) {
-        if (StringUtils.isBlank(context.getHttpUrl())) {
-            if (Objects.isNull(context.getParam()) || Objects.isNull(context.getHttpRequestMethod())) {
-                throw new ParamException("数据异常,methodParamResult or httpRequestMethod is null");
-            }
-            String baseUrl = context.getUrl(getConfig().getBaseUrl());
-            if (isGet(context)
-                    || context.isPostEntity()) {
-                context.setHttpUrl(UrlUtil.getParamUrl(baseUrl, context.getNameValueParams()));
-            } else {
-                context.setHttpUrl(baseUrl);
-            }
-        }
-    }
-
-    protected HttpClientConfig getConfig() {
-        if (Objects.isNull(httpClientConfig)) {
-            httpClientConfig = SpringUtil.getBean(HttpClientConfig.class);
-        }
-        return httpClientConfig;
+    public void setHttpUrl(HttpRequestContext context) throws Exception {
+        String url = AnalysisUrlHandlerManager.analysisUrl(context);
+        context.setHttpUrl(url);
     }
 
 

@@ -82,52 +82,6 @@ public class HttpRequestContext {
     }
 
 
-    public String getUrl(String defaultBaseUrl) {
-        if (Objects.nonNull(param.getHttpUrl())) {
-            return param.getHttpUrl().getUrl();
-        }
-
-        String url = getBasePath(defaultBaseUrl);
-
-        //拼接类上的根路径
-        String basePath = interfaceHttpClient.path();
-        if (StringUtils.isNotBlank(basePath)) {
-            url = UrlUtil.splicingUrl(url, basePath);
-        }
-        //如果方法没有注解,则取方法名称作为路径
-        String path = "";
-
-        if (Objects.nonNull(methodHttpClient)) {
-            path = methodHttpClient.path();
-            if (StringUtils.isBlank(path) && methodHttpClient.pathMethodName()) {
-                //如果path为空,但是注解标注使用方法名,则path使用方法名称
-                path = method.getName();
-            }
-        } else if (interfaceHttpClient.pathMethodName()) {
-            //如果类注解上标注了使用方法名称
-            path = method.getName();
-        }
-        return UrlUtil.splicingUrl(url, path);
-    }
-
-    private String getBasePath(String defaultBaseUrl) {
-        String url = Objects.isNull(methodHttpClient) ? null : UrlUtil.getUrl(methodHttpClient);
-        if (StringUtils.isBlank(url)) {
-            url = UrlUtil.getUrl(interfaceHttpClient);
-        }
-        if (StringUtils.isBlank(url)) {
-            if (StringUtils.isNotBlank(defaultBaseUrl)) {
-                url = defaultBaseUrl;
-            } else {
-                throw new IllegalArgumentException("url:error,url is blank");
-            }
-        }
-        if (!url.contains("://")) {
-            url = "https://" + url;
-        }
-        return url;
-    }
-
 
     public boolean isPostEntity() {
         if (httpRequestMethod != HttpRequestMethod.POST) {
