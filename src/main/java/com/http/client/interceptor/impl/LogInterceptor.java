@@ -16,9 +16,8 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * @program: duiba-saas
  * @description:
- * @author: 郭云龙
+ * @author: linzhou
  * @create: 2021-12-31 17:04
  **/
 @Component
