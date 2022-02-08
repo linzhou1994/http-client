@@ -74,6 +74,14 @@ public class UrlUtil {
         return url;
     }
 
+    /**
+     * 通过httpClient注解获取url
+     * 优先从配置文件中获取
+     * 如果配置文件中没有获取到,则直接返回
+     *
+     * @param httpClient
+     * @return
+     */
     public static String getUrl(HttpClient httpClient) {
         if (Objects.isNull(httpClient)) {
             return null;
