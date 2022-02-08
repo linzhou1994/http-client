@@ -30,7 +30,7 @@ public class DefaultAnalysisUrlHandler implements AnalysisUrlHandler {
 
     @Override
     public AnalysisUrlResult analysisUrl(HttpRequestContext context, String url) throws Exception {
-        return new AnalysisUrlResult(getHttpUrl(context));
+        return new AnalysisUrlResult(StringUtils.isBlank(url) ? getHttpUrl(context) : url);
     }
 
     /**
@@ -43,10 +43,10 @@ public class DefaultAnalysisUrlHandler implements AnalysisUrlHandler {
             if (Objects.isNull(context.getParam()) || Objects.isNull(context.getHttpRequestMethod())) {
                 throw new ParamException("数据异常,methodParamResult or httpRequestMethod is null");
             }
-            String baseUrl = getUrl(context,httpClientConfig.getBaseUrl());
+            String baseUrl = getUrl(context, httpClientConfig.getBaseUrl());
             if (isGet(context)
                     || context.isPostEntity()) {
-               return UrlUtil.getParamUrl(baseUrl, context.getNameValueParams());
+                return UrlUtil.getParamUrl(baseUrl, context.getNameValueParams());
             } else {
                 return baseUrl;
             }
@@ -74,7 +74,7 @@ public class DefaultAnalysisUrlHandler implements AnalysisUrlHandler {
         HttpClient methodHttpClient = context.getMethodHttpClient();
         Method method = context.getMethod();
 
-        String url = getBasePath(context,defaultBaseUrl);
+        String url = getBasePath(context, defaultBaseUrl);
 
         //拼接类上的根路径
         String basePath = interfaceHttpClient.path();
