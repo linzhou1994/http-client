@@ -1,6 +1,5 @@
 package com.http.client.handler.analysis.url.impl;
 
-import com.biz.tool.spring.SpringUtil;
 import com.http.client.annotation.HttpClient;
 import com.http.client.config.HttpClientConfig;
 import com.http.client.context.HttpRequestContext;
@@ -11,7 +10,6 @@ import com.http.client.utils.UrlUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
