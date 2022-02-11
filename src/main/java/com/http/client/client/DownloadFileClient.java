@@ -2,6 +2,7 @@ package com.http.client.client;
 
 import com.http.client.annotation.HttpClient;
 import com.http.client.annotation.HttpParam;
+import com.http.client.context.header.HttpHeader;
 import com.http.client.context.url.HttpUrl;
 import com.http.client.enums.HttpRequestMethod;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +12,7 @@ import java.io.File;
 @HttpClient(method = HttpRequestMethod.POST)
 public interface DownloadFileClient {
 
+
     /**
      * 下载文件
      *
@@ -18,7 +20,7 @@ public interface DownloadFileClient {
      * @param param
      * @return
      */
-    MultipartFile downloadMultipartFile(HttpUrl httpUrl, @HttpParam("param") String param);
+    MultipartFile downloadMultipartFile(HttpUrl httpUrl, HttpHeader header, @HttpParam Object param);
 
     /**
      * 下载文件
@@ -26,6 +28,6 @@ public interface DownloadFileClient {
      * @param param
      * @return
      */
-    File downloadFile(HttpUrl httpUrl, @HttpParam("param") String param);
+    File downloadFile(HttpUrl httpUrl, HttpHeader header, @HttpParam Object param);
 
 }

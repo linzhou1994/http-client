@@ -4,6 +4,7 @@ package com.http.client;
 import com.biz.tool.file.FileUtil;
 import com.http.client.context.url.HttpUrl;
 import com.http.client.client.DownloadFileClient;
+import com.http.controller.DownloadFileParam;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +106,8 @@ public class HttpClientTest extends BaseTest {
     @Test
     public void downloadFileTest() throws Exception {
         HttpUrl httpUrl = new HttpUrl("http://127.0.0.1:8080/file/downloadFile");
-        File file = httpDownloadClient.downloadFile(httpUrl, "123");
+
+        File file = httpDownloadClient.downloadFile(httpUrl, null,new DownloadFileParam( "123"));
         String s = new String(getByte(new FileInputStream(file)), StandardCharsets.UTF_8);
         log.info("downloadFileTest test:" + s);
     }
@@ -118,7 +120,7 @@ public class HttpClientTest extends BaseTest {
     @Test
     public void downloadMultipartFileTest() throws IOException {
         HttpUrl httpUrl = new HttpUrl("http://127.0.0.1:8080/file/downloadFile");
-        MultipartFile file = httpDownloadClient.downloadMultipartFile(httpUrl, "123");
+        MultipartFile file = httpDownloadClient.downloadMultipartFile(httpUrl,null,new DownloadFileParam( "123"));
         String s = new String(getByte(file.getInputStream()), StandardCharsets.UTF_8);
         log.info("downloadMultipartFileTest test:" + s);
     }

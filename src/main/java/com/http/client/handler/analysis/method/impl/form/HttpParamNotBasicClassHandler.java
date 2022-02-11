@@ -88,10 +88,24 @@ public class HttpParamNotBasicClassHandler implements AnalysisMethodParamHandler
 
         JSONObject jsonObject = (JSONObject) o;
         for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
-            NameValueParam nameValueParam = new NameValueParam(entry.getKey(), JSON.toJSONString(entry.getValue()));
+            String value = objectToString(entry.getValue());
+            if (StringUtils.isBlank(value)){
+                continue;
+            }
+            NameValueParam nameValueParam = new NameValueParam(entry.getKey(), value);
             nameValueParams.add(nameValueParam);
         }
         return nameValueParams;
+    }
+
+    private String objectToString(Object o) {
+        if (Objects.isNull(o)) {
+            return null;
+        }
+        if (o instanceof String) {
+            return (String) o;
+        }
+        return JSON.toJSONString(o);
     }
 
     /**
