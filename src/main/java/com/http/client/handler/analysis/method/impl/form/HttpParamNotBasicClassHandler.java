@@ -75,10 +75,6 @@ public class HttpParamNotBasicClassHandler implements AnalysisMethodParamHandler
      */
     private List<NameValueParam> getNameValueParam(Object arg, HttpParam httpParam) {
         //如果是表单参数,则当做表单处理
-        String name = httpParam.value();
-        if (StringUtils.isBlank(name)) {
-            throw new ParamException("参数格式错误,没有发现表单参数对应的名称");
-        }
         if (arg == null) {
             return Collections.emptyList();
         }
