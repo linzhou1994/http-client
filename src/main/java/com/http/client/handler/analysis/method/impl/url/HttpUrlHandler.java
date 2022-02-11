@@ -1,10 +1,14 @@
 package com.http.client.handler.analysis.method.impl.url;
 
-import com.http.client.context.url.HttpUrl;
+import com.biz.tool.annotations.AnnotationUtil;
+import com.http.client.annotation.HttpParam;
+import com.http.client.annotation.HttpUrl;
+import com.http.client.context.url.HttpRequestUrl;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
+import java.util.Objects;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -47,8 +51,16 @@ import java.lang.annotation.Annotation;
 public class HttpUrlHandler implements AnalysisMethodParamHandler {
     @Override
     public Object analysisMethodParam(Object param, Annotation[] annotations) throws Exception {
-        if (param instanceof HttpUrl){
+        if (param instanceof HttpRequestUrl){
             return param;
+        }
+        HttpUrl httpUrl = AnnotationUtil.findHttpAnnotation(annotations, HttpUrl.class);
+        if (Objects.nonNull(httpUrl)){
+            if (param instanceof String){
+                return new HttpRequestUrl((String) param);
+            }else {
+                throw new IllegalArgumentException("@HttpUrl注解只能使用在String类型的方法参数上");
+            }
         }
         return null;
     }

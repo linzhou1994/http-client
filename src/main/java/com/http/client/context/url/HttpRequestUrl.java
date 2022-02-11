@@ -7,10 +7,10 @@ import lombok.Data;
  * @author linzhou
  */
 @Data
-public class HttpUrl implements Url{
+public class HttpRequestUrl implements Url{
     private String url;
 
-    public HttpUrl(String url) {
+    public HttpRequestUrl(String url) {
         this.url = url;
     }
 }
