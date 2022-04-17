@@ -53,11 +53,10 @@ public class AnnotationInterceptor implements HttpClientInterceptor {
     @Override
     public Object httpBefore(HttpRequestContext context) {
 
-        Annotation[] annotations = context.getMethod().getAnnotations();
         Set<Class<?extends Annotation>> breakExplain = new HashSet<>();
         breakExplain.add(HttpClient.class);
         //执行方法上声明的注解
-        for (Annotation annotation : context.getType().getAnnotations()) {
+        for (Annotation annotation : context.getMethod().getAnnotations()) {
             Class<? extends Annotation> annotationClass = annotation.getClass();
             if (!(breakExplain.contains(annotationClass))) {
                 ExplainManager.explain(context, annotation);
