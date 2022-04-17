@@ -57,14 +57,16 @@ public class UrlUtil {
      */
     public static String splicingUrl(String url, String path) {
         String separate = HTTP_SPLIT;
-        if (url.lastIndexOf(separate) != url.length() - 1 && path.indexOf(separate) != 0) {
-            //如果url最后没有"/",并且path也没有,则添加一个"/"
-            url += separate;
-        } else if (url.lastIndexOf(separate) == url.length() - 1 && path.indexOf(separate) == 0) {
-            //如果url最后有"/",并且path也有,则删除一个"/"
-            url = url.substring(0, url.length() - 1);
+        if(StringUtils.isNotBlank(path)){
+            if (url.lastIndexOf(separate) != url.length() - 1 && path.indexOf(separate) != 0) {
+                //如果url最后没有"/",并且path也没有,则添加一个"/"
+                url += separate;
+            } else if (url.lastIndexOf(separate) == url.length() - 1 && path.indexOf(separate) == 0) {
+                //如果url最后有"/",并且path也有,则删除一个"/"
+                url = url.substring(0, url.length() - 1);
+            }
+            url = url + path;
         }
-        url = url + path;
         try {
             //检测url格式
             new URL(url);
