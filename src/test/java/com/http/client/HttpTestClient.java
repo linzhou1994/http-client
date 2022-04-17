@@ -19,6 +19,9 @@ public interface HttpTestClient {
     @HttpClient(path = "getLogin")
     String getLogin(@HttpParam("name")String name,@HttpParam("password")String password);
 
+    @HttpClient(path = "getLogin")
+    String getLogin(@HttpParam LoginParam param);
+
     /**
      * post请求
      * @param param
