@@ -7,6 +7,8 @@ import com.http.client.interceptor.impl.explain.ExplainManager;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -51,8 +53,22 @@ public class AnnotationInterceptor implements HttpClientInterceptor {
     @Override
     public Object httpBefore(HttpRequestContext context) {
 
+        Annotation[] annotations = context.getMethod().getAnnotations();
+        Set<Class<?extends Annotation>> breakExplain = new HashSet<>();
+        breakExplain.add(HttpClient.class);
+        //执行方法上声明的注解
         for (Annotation annotation : context.getType().getAnnotations()) {
-            if (!(annotation instanceof HttpClient)) {
+            Class<? extends Annotation> annotationClass = annotation.getClass();
+            if (!(breakExplain.contains(annotationClass))) {
+                ExplainManager.explain(context, annotation);
+                //方法上执行过得，在接口上跳过
+                breakExplain.add(annotationClass);
+            }
+        }
+        //执行接口上声明的注解
+        for (Annotation annotation : context.getType().getAnnotations()) {
+            Class<? extends Annotation> annotationClass = annotation.getClass();
+            if (!(breakExplain.contains(annotationClass))) {
                 ExplainManager.explain(context, annotation);
             }
         }
