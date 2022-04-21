@@ -2,13 +2,13 @@ package com.http.client.context;
 
 
 import com.http.client.annotation.HttpClient;
-import com.http.client.context.body.FileBody;
+import com.http.client.context.body.Body;
+import com.http.client.context.body.file.FileBody;
 import com.http.client.context.form.Form;
 import com.http.client.context.header.HttpHeader;
 import com.http.client.bo.HttpClientRequest;
 import com.http.client.enums.HttpRequestMethod;
 import com.http.client.factorybean.HttpFactoryBean;
-import com.http.client.utils.UrlUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -82,13 +82,12 @@ public class HttpRequestContext {
     }
 
 
-
     public boolean isPostEntity() {
         if (httpRequestMethod != HttpRequestMethod.POST) {
             return false;
         }
 
-        return StringUtils.isNotBlank(param.getBody());
+        return Objects.nonNull(param.getBody()) && StringUtils.isNotBlank(param.getBody().getBody());
     }
 
     /**
@@ -136,7 +135,7 @@ public class HttpRequestContext {
         return null;
     }
 
-    public String getBody() {
+    public Body getBody() {
         if (Objects.nonNull(param)) {
             return param.getBody();
         }

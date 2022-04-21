@@ -1,7 +1,7 @@
 package com.http.client.handler.http.request.impl;
 
 import com.http.client.bo.HttpClientRequest;
-import com.http.client.context.body.FileBody;
+import com.http.client.context.body.file.FileBody;
 import com.http.client.handler.http.request.SetHttpParamHandler;
 import org.springframework.stereotype.Component;
 

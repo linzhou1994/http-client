@@ -1,13 +1,12 @@
 package com.http.client.bo;
 
-import com.http.client.context.body.FileBody;
+import com.http.client.context.body.Body;
+import com.http.client.context.body.file.FileBody;
 import com.http.client.context.form.Form;
 import com.http.client.context.header.HttpHeader;
 import com.http.client.context.url.Url;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +28,7 @@ public class HttpClientRequest {
     /**
      * body形式的数据
      */
-    private String body = null;
+    private Body body = null;
     /**
      * 需要上传的文件
      */
@@ -66,11 +65,11 @@ public class HttpClientRequest {
         }
     }
 
-    public String getBody() {
+    public Body getBody() {
         return body;
     }
 
-    public void setBody(String body) {
+    public void setBody(Body body) {
         this.body = body;
     }
 

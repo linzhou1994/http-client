@@ -1,8 +1,9 @@
-package com.http.client.context.body;
+package com.http.client.context.body.file;
 
+import com.biz.tool.file.FileUtil;
 import com.http.client.annotation.HttpFile;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -11,20 +12,20 @@ import java.util.Map;
  *
  * @author linzhou
  */
-public class UploadMultipartFile implements FileBody{
+public class UploadFile implements FileBody {
 
     private HttpFile httpFile;
 
-    private MultipartFile file;
+    private File file;
 
     private Map<String, String> param;
 
-    public UploadMultipartFile(HttpFile httpFile, MultipartFile file) {
+    public UploadFile(HttpFile httpFile, File file) {
         this.httpFile = httpFile;
         this.file = file;
     }
 
-    public UploadMultipartFile(HttpFile httpFile, MultipartFile file, Map<String, String> param) {
+    public UploadFile(HttpFile httpFile, File file, Map<String, String> param) {
         this.httpFile = httpFile;
         this.file = file;
         this.param = param;
@@ -38,11 +39,11 @@ public class UploadMultipartFile implements FileBody{
         this.httpFile = httpFile;
     }
 
-    public MultipartFile getFile() {
+    public File getFile() {
         return file;
     }
 
-    public void setFile(MultipartFile file) {
+    public void setFile(File file) {
         this.file = file;
     }
 
@@ -55,17 +56,17 @@ public class UploadMultipartFile implements FileBody{
     }
 
     @Override
-    public String getName(){
+    public String getName() {
         return httpFile.value();
     }
 
     @Override
     public String getFileName() {
-        return file.getOriginalFilename();
+        return file.getName();
     }
 
     @Override
     public byte[] getFileBytes() throws IOException {
-        return file.getBytes();
+        return FileUtil.getFileBytes(file);
     }
 }

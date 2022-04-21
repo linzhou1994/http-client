@@ -1,6 +1,7 @@
 package com.http.client.handler.http.request.impl;
 
 import com.http.client.bo.HttpClientRequest;
+import com.http.client.context.body.DefaultBody;
 import com.http.client.handler.http.request.SetHttpParamHandler;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class SetBodyHandler implements SetHttpParamHandler {
     public boolean setHttpParam(HttpClientRequest request, Object o) {
 
         if (o instanceof String){
-            request.setBody((String) o);
+            request.setBody(new DefaultBody((String) o));
             return true;
         }
 

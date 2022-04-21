@@ -3,6 +3,7 @@ package com.http.client.interceptor.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.http.client.context.HttpRequestContext;
+import com.http.client.context.body.Body;
 import com.http.client.context.form.Form;
 import com.http.client.interceptor.HttpClientInterceptor;
 import com.http.client.response.HttpClientResponse;
@@ -30,7 +31,7 @@ public class LogInterceptor implements HttpClientInterceptor {
     public Object httpAfter(HttpClientResponse response, Object rlt) throws Exception {
         String httpUrl = response.getHttpUrl();
         HttpRequestContext context = response.getContext();
-        String body = context.getBody();
+        Body body = context.getBody();
         List<Form> nameValueParams = context.getNameValueParams();
 
         String result = getResult(response, rlt);
@@ -44,7 +45,7 @@ public class LogInterceptor implements HttpClientInterceptor {
     @Override
     public Object httpException(HttpRequestContext context, Throwable e) throws Exception {
         String httpUrl = context.getHttpUrl();
-        String body = context.getBody();
+        Body body = context.getBody();
         List<Form> nameValueParams = context.getNameValueParams();
         LogInfo logInfo = new LogInfo(httpUrl, body, nameValueParams, null);
         logger.error(JSON.toJSONString(logInfo), e);
@@ -57,11 +58,11 @@ public class LogInterceptor implements HttpClientInterceptor {
 
     public static class LogInfo {
         private String httpUrl;
-        private String body;
+        private Body body;
         private List<Form> form;
         private String result;
 
-        public LogInfo(String httpUrl, String body, List<Form> form, String result) {
+        public LogInfo(String httpUrl, Body body, List<Form> form, String result) {
             this.httpUrl = httpUrl;
             this.body = body;
             this.form = form;
@@ -76,11 +77,11 @@ public class LogInterceptor implements HttpClientInterceptor {
             this.httpUrl = httpUrl;
         }
 
-        public String getBody() {
+        public Body getBody() {
             return body;
         }
 
-        public void setBody(String body) {
+        public void setBody(Body body) {
             this.body = body;
         }
 

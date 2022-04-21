@@ -1,4 +1,4 @@
-package com.http.client.context.body;
+package com.http.client.context.body.file;
 
 import org.springframework.web.multipart.MultipartFile;
 

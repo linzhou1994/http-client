@@ -1,7 +1,8 @@
 package com.http.client.utils;
 
 
-import com.http.client.context.body.FileBody;
+import com.http.client.context.body.Body;
+import com.http.client.context.body.file.FileBody;
 import com.http.client.context.form.Form;
 import com.http.client.context.header.HttpHeader;
 import com.http.client.context.HttpRequestContext;
@@ -104,14 +105,14 @@ public class OkHttpClientUtil {
 
     private static Request buildPostRequest(HttpRequestContext context) throws IOException {
 
-        String body = context.getBody();
+        Body body = context.getBody();
         Request.Builder requestBuilder = getRequestBuilder(context);
 
         RequestBody requestBody;
 //        if (CollectionUtils.isNotEmpty(context.getUploadFiles())) {
 //            requestBody = getMultipartBuilderBody(context);
 //        } else
-        if (StringUtils.isNotBlank(body)) {
+        if (Objects.nonNull(body)&&StringUtils.isNotBlank(body.getBody())) {
             requestBody = getRequestBody(body);
 
         } else if (CollectionUtils.isNotEmpty(context.getUploadFiles())
@@ -153,12 +154,12 @@ public class OkHttpClientUtil {
     }
 
 
-    private static RequestBody getRequestBody(String body) {
+    private static RequestBody getRequestBody(Body body) {
         RequestBody requestBody;
         //修改样式
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         //修改样式和上传json参数
-        requestBody = RequestBody.create(JSON, body);
+        requestBody = RequestBody.create(JSON, body.getBody());
         return requestBody;
     }
 

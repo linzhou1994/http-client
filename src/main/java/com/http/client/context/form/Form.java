@@ -1,5 +1,7 @@
 package com.http.client.context.form;
 
+import org.apache.http.entity.ContentType;
+
 /**
  * ////////////////////////////////////////////////////////////////////
  * //                          _ooOoo_                               //
@@ -50,4 +52,8 @@ public interface Form {
      * @return
      */
     String getValue();
+
+    String mimeType();
+
+    String charset();
 }

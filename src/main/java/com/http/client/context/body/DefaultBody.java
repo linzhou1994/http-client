@@ -1,20 +1,6 @@
-package com.http.client.handler.analysis.method.impl.body;
+package com.http.client.context.body;
 
-import com.biz.tool.annotations.AnnotationUtil;
-import com.http.client.annotation.HttpFile;
-import com.http.client.bo.FileParam;
-import com.http.client.context.body.file.FileBody;
-import com.http.client.context.body.file.UploadFile;
-import com.http.client.context.body.file.UploadMultipartFile;
-import com.http.client.exception.ParamException;
-import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.util.Objects;
+import com.http.client.context.ContentType;
 
 /**
  * ////////////////////////////////////////////////////////////////////
@@ -49,40 +35,39 @@ import java.util.Objects;
  * //                 不见满街漂亮妹，哪个归得程序员?                      //
  * ////////////////////////////////////////////////////////////////////
  *
- * @date : 2021/12/12 15:28
+ * @date : 2022/4/21 18:54
  * @author: linzhou
- * @description : 文件参数处理器
+ * @description : DefaultBody
  */
-@Component
-public class HttpFileHandler implements AnalysisMethodParamHandler {
-    @Override
-    public Object analysisMethodParam(Object param, Annotation[] annotations) throws IOException {
-        HttpFile httpFile = AnnotationUtil.findHttpAnnotation(annotations, HttpFile.class);
-        if (Objects.nonNull(httpFile)){
-            return getUploadFile(param,httpFile);
-        }
-        return null;
+public class DefaultBody implements Body {
+    private String body;
+    private String mimeType;
+    private String charset;
+
+    public DefaultBody(String body) {
+        this.body = body;
+        this.mimeType = ContentType.APPLICATION_X_WWW_FORM_URLENCODED;
+        this.charset = ContentType.UTF8;
     }
-    /**
-     * 处理文件上传
-     *
-     * @param arg
-     * @param httpFile
-     * @return
-     */
-    private FileBody getUploadFile(Object arg, HttpFile httpFile) throws IOException {
-        FileBody uploadFile;
-        //保存需要上传的文件信息
-        if (arg instanceof MultipartFile) {
-            uploadFile = new UploadMultipartFile(httpFile, (MultipartFile) arg);
-        } else if (arg instanceof FileParam) {
-            FileParam fileParam = (FileParam) arg;
-            uploadFile = new UploadMultipartFile(httpFile, fileParam.getFile(), fileParam.getParam());
-        } else if (arg instanceof File) {
-            uploadFile = new UploadFile(httpFile, (File) arg);
-        } else {
-            throw new ParamException("参数格式错误,上传文件应为MultipartFile或者file类型,当前类型:" + arg.getClass().getName());
-        }
-        return uploadFile;
+
+    public DefaultBody(String body, String mimeType, String charset) {
+        this.body = body;
+        this.mimeType = mimeType;
+        this.charset = charset;
+    }
+
+    @Override
+    public String getBody() {
+        return body;
+    }
+
+    @Override
+    public String mimeType() {
+        return mimeType;
+    }
+
+    @Override
+    public String charset() {
+        return charset;
     }
 }

@@ -36,6 +36,17 @@ public class AnnotationNameValueParam implements Form {
         return value;
     }
 
+    @Override
+    public String mimeType() {
+        return httpParam.mimeType();
+    }
+
+    @Override
+    public String charset() {
+        return httpParam.charset();
+    }
+
+
     public void setValue(String value) {
         this.value = value;
     }
