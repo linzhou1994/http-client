@@ -189,7 +189,7 @@ public class ApacheHttpProxy extends AbstractHttpProxy {
             FileBody fileBody = uploadFiles.get(0);
 
             ByteArrayBody byteArrayBody = new ByteArrayBody(fileBody.getFileBytes(), fileBody.getFileName());
-            String value = StringUtils.isBlank(fileBody.getName()) ? "file" : fileBody.getName();
+            String value = StringUtils.isBlank(fileBody.getName()) ? "src/test/resources/file" : fileBody.getName();
             builder.addPart(value, byteArrayBody);
 
         }

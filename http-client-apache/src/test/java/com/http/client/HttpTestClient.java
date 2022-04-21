@@ -56,7 +56,7 @@ public interface HttpTestClient {
      * @return
      */
     @HttpClient(url = "http://127.0.0.1:8080/file",path = "uploadFile",method = HttpRequestMethod.POST)
-    String uploadMultipartFile(@HttpFile("file") MultipartFile file, @HttpParam("param")String param);
+    String uploadMultipartFile(@HttpFile("src/test/resources/file") MultipartFile file, @HttpParam("param")String param);
 
     /**
      * 文件上传
@@ -65,5 +65,5 @@ public interface HttpTestClient {
      * @return
      */
     @HttpClient(url = "http://127.0.0.1:8080/file",path = "uploadFile",method = HttpRequestMethod.POST)
-    String uploadFile(@HttpFile("file")File file, @HttpParam("param")String param);
+    String uploadFile(@HttpFile("src/test/resources/file")File file, @HttpParam("param")String param);
 }

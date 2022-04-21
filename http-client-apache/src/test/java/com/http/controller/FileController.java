@@ -18,7 +18,7 @@ import java.io.IOException;
 @RequestMapping("file")
 public class FileController {
     private static final String FILE_NAME = "downloadTestFile.txt";
-    private static final String FILE_PATH = "download/downloadTestFile.txt";
+    private static final String FILE_PATH = "src/test/resources/download/downloadTestFile.txt";
 
 
 

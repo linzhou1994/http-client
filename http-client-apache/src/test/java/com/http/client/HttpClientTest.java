@@ -32,7 +32,7 @@ public class HttpClientTest extends BaseTest {
     public void postTest() {
         LoginParam p = new LoginParam();
         p.setPassword("12345678");
-        p.setName("httpClient");
+        p.setName("src/main/resources/httpClient");
         String rlt = httpPropertyTestClient.postLogin(p);
         log.info("rlt1:" + rlt);
          rlt = httpTestClient.postLogin(p);
@@ -72,11 +72,11 @@ public class HttpClientTest extends BaseTest {
      */
     @Test
     public void getTest() {
-        String rlt = httpTestClient.getLogin("httpClient", "12345678");
+        String rlt = httpTestClient.getLogin("src/main/resources/httpClient", "12345678");
         log.info("rlt1:" + rlt);
         LoginParam p = new LoginParam();
         p.setPassword("12345678");
-        p.setName("httpClient");
+        p.setName("src/main/resources/httpClient");
         rlt = httpTestClient.getLogin(p);
         log.info("rlt1:" + rlt);
     }
@@ -88,7 +88,7 @@ public class HttpClientTest extends BaseTest {
      */
     @Test
     public void uploadFile() throws FileNotFoundException {
-        File file = FileUtil.getFile("file/fileTest.txt");
+        File file = FileUtil.getFile("src/test/resources/file/fileTest.txt");
         String rlt = httpTestClient.uploadFile(file, "uploadFile");
         log.info("rlt1:" + rlt);
     }
@@ -100,7 +100,7 @@ public class HttpClientTest extends BaseTest {
      */
     @Test
     public void uploadMultipartFile() throws IOException {
-        File file = FileUtil.getFile("file/fileTest2.txt");
+        File file = FileUtil.getFile("src/test/resources/file/fileTest2.txt");
         String rlt = httpTestClient.uploadMultipartFile(FileUtil.getMockMultipartFile(file), "uploadMultipartFile");
         log.info("rlt1:" + rlt);
     }

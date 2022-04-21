@@ -8,8 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
-@HttpClient(url = HttpClientTest.PROPERTY_URL,pathMethodName = false)
-public interface HttpPropertyTestClient {
+@HttpClient(url = "http://127.0.0.1:8080/login",pathMethodName = false)
+public interface HttpTestClient {
     /**
      * 普通get请求
      * @param name
@@ -18,6 +18,9 @@ public interface HttpPropertyTestClient {
      */
     @HttpClient(path = "getLogin")
     String getLogin(@HttpParam("name")String name,@HttpParam("password")String password);
+
+    @HttpClient(path = "getLogin")
+    String getLogin(@HttpParam LoginParam param);
 
     /**
      * post请求
@@ -53,7 +56,7 @@ public interface HttpPropertyTestClient {
      * @return
      */
     @HttpClient(url = "http://127.0.0.1:8080/file",path = "uploadFile",method = HttpRequestMethod.POST)
-    String uploadMultipartFile(@HttpFile("file") MultipartFile file, @HttpParam("param")String param);
+    String uploadMultipartFile(@HttpFile("src/test/resources/file") MultipartFile file, @HttpParam("param")String param);
 
     /**
      * 文件上传
@@ -62,5 +65,5 @@ public interface HttpPropertyTestClient {
      * @return
      */
     @HttpClient(url = "http://127.0.0.1:8080/file",path = "uploadFile",method = HttpRequestMethod.POST)
-    String uploadFile(@HttpFile("file")File file, @HttpParam("param")String param);
+    String uploadFile(@HttpFile("src/test/resources/file")File file, @HttpParam("param")String param);
 }
