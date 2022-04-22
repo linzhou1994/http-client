@@ -100,7 +100,7 @@ public class HttpClientTest extends BaseTest {
      */
     @Test
     public void uploadMultipartFile() throws IOException {
-        File file = FileUtil.getFile("src/test/resources/file/fileTest2.txt");
+        File file = new File("file/fileTest.txt");
         String rlt = httpTestClient.uploadMultipartFile(FileUtil.getMockMultipartFile(file), "uploadMultipartFile");
         log.info("rlt1:" + rlt);
     }

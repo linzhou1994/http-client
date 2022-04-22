@@ -27,7 +27,7 @@ public class FileController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("url","uploadFile");
         jsonObject.put("param",param);
-        FileUtil.getFile(file,"src/main/resources/upload");
+        FileUtil.getFile(file,"upload");
         return jsonObject.toJSONString();
     }
     @PostMapping("downloadFile")
