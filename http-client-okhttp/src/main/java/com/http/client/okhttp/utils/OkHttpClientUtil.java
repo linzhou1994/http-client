@@ -1,25 +1,23 @@
-package com.http.client.utils;
+package com.http.client.okhttp.utils;
 
 
+import com.http.client.context.HttpRequestContext;
 import com.http.client.context.body.Body;
 import com.http.client.context.body.file.FileBody;
 import com.http.client.context.form.Form;
 import com.http.client.context.header.HttpHeader;
-import com.http.client.context.HttpRequestContext;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.MultipartBuilder;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+import com.squareup.okhttp.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.FileNameMap;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class OkHttpClientUtil {
 

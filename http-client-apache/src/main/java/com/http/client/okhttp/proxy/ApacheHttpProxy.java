@@ -1,4 +1,4 @@
-package com.http.client.apache.proxy;
+package com.http.client.okhttp.proxy;
 
 
 import com.http.client.context.HttpRequestContext;

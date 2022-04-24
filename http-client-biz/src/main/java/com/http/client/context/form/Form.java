@@ -1,6 +1,5 @@
 package com.http.client.context.form;
 
-import org.apache.http.entity.ContentType;
 
 /**
  * ////////////////////////////////////////////////////////////////////

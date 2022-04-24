@@ -1,7 +1,6 @@
 package com.http.client.annotation;
 
 import com.http.client.proxy.AbstractHttpProxy;
-import com.http.client.proxy.OkHttpProxy;
 import com.http.client.registrar.HttpClientRegistrar;
 import org.springframework.context.annotation.Import;
 
@@ -30,5 +29,5 @@ public @interface EnableHttpClient {
      *
      *  @return 动态代理类
      */
-    Class<?extends AbstractHttpProxy> defaultProxy() default OkHttpProxy.class;
+    Class<?extends AbstractHttpProxy> defaultProxy() ;
 }
