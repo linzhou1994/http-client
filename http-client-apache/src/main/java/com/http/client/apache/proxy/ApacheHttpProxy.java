@@ -1,26 +1,20 @@
-package com.http.client.okhttp.proxy;
+package com.http.client.apache.proxy;
 
 
+import com.biz.tool.spring.SpringUtil;
+import com.http.client.apache.config.ApacheHttpConfig;
+import com.http.client.apache.proxy.handler.ApacheHttpProxyHandler;
+import com.http.client.apache.proxy.handler.ApacheHttpProxyHandlerManager;
 import com.http.client.context.HttpRequestContext;
-import com.http.client.context.body.Body;
-import com.http.client.context.body.file.FileBody;
-import com.http.client.context.form.Form;
 import com.http.client.context.header.HttpHeader;
 import com.http.client.proxy.AbstractHttpProxy;
 import com.http.client.response.BaseHttpClientResponse;
 import com.http.client.utils.AutoCloseUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
@@ -28,24 +22,16 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
@@ -59,16 +45,13 @@ import java.util.*;
 @Slf4j
 public class ApacheHttpProxy extends AbstractHttpProxy {
 
-    private static final int CONNECTION_TIMEOUT = 300000;
-    private static final int SOCKET_TIMEOUT = 300000;
-    private static final int CONNECTION_REQUEST_TIMEOUT = 300000;
-    private static final int MAX_CONNECTION_PER_HOST = 20;
-    private static final int MAX_TOTAL_CONNECTIONS = 100;
-    private static final String SSL_PROTOCOL = "SSL";
+
+    private ApacheHttpConfig apacheHttpConfig;
+
+
 
     private CloseableHttpClient client;
 
-    public static final String DEFAULT_ENCODING = "UTF-8";
 
 
     @Override
@@ -96,18 +79,11 @@ public class ApacheHttpProxy extends AbstractHttpProxy {
     }
 
     private HttpRequestBase getHttpRequestBase(HttpRequestContext context) throws Throwable {
-        HttpRequestBase httpRequest;
-        switch (context.getHttpRequestMethod()) {
-            case POST:
-                httpRequest = getHttpPost(context);
-                break;
-            case GET:
-            case NULL:
-                httpRequest = new HttpGet(context.getHttpUrl());
-                break;
-            default:
-                throw new HttpException("不支持的请求类型");
+        ApacheHttpProxyHandler handler = ApacheHttpProxyHandlerManager.getHandler(context.getHttpRequestMethod());
+        if (handler == null) {
+            throw new IllegalArgumentException("不支持的请求方式:" + context.getHttpRequestMethod());
         }
+        HttpRequestBase httpRequest = handler.getRequest(context);
         setHeader(httpRequest, context);
         return httpRequest;
     }
@@ -139,72 +115,6 @@ public class ApacheHttpProxy extends AbstractHttpProxy {
         return httpHeader;
     }
 
-    /**
-     * 创建post请求
-     *
-     * @param context
-     * @return
-     * @throws UnsupportedEncodingException
-     */
-    private HttpRequestBase getHttpPost(HttpRequestContext context) throws Throwable {
-        String url = context.getHttpUrl();
-        HttpPost httpPost = new HttpPost(url);
-
-        HttpEntity entity = getHttpEntity(context);
-        if (entity != null) {
-            //设置entity
-            httpPost.setEntity(entity);
-        }
-        return httpPost;
-    }
-
-    private HttpEntity getHttpEntity(HttpRequestContext context) throws IOException {
-
-        Body body = context.getBody();
-        if (Objects.nonNull(body) && StringUtils.isNotBlank(body.getBody())) {
-            //设置body
-            String mimeType = body.mimeType();
-            String charset = body.charset();
-            ContentType contentType = ContentType.create(mimeType, charset);
-            return new StringEntity(body.getBody(), ContentType.APPLICATION_JSON);
-        }
-        List<FileBody> uploadFiles = context.getUploadFiles();
-        List<Form> nameValueParams = context.getNameValueParams();
-        if (CollectionUtils.isEmpty(uploadFiles)) {
-
-            List<NameValuePair> pairs = new ArrayList<>(nameValueParams.size());
-            for (Form nameValueParam : nameValueParams) {
-                String value = nameValueParam.getValue();
-                if (value != null) {
-                    pairs.add(new BasicNameValuePair(nameValueParam.getName(), value));
-                }
-            }
-            return new UrlEncodedFormEntity(pairs, StandardCharsets.UTF_8);
-        }
-        //设置文件上传
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        //加上此行代码解决返回中文乱码问题
-        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-        if (CollectionUtils.isNotEmpty(uploadFiles)) {
-            FileBody fileBody = uploadFiles.get(0);
-
-            ByteArrayBody byteArrayBody = new ByteArrayBody(fileBody.getFileBytes(), fileBody.getFileName());
-            String value = StringUtils.isBlank(fileBody.getName()) ? "src/test/resources/file" : fileBody.getName();
-            builder.addPart(value, byteArrayBody);
-
-        }
-
-        if (CollectionUtils.isNotEmpty(nameValueParams)) {
-            for (Form nameValueParam : nameValueParams) {
-                String mimeType = nameValueParam.mimeType();
-                String charset = nameValueParam.charset();
-                ContentType contentType = ContentType.create(mimeType, charset);
-                builder.addTextBody(nameValueParam.getName(), nameValueParam.getValue(), contentType);
-            }
-        }
-        return builder.build();
-    }
-
 
     public CloseableHttpClient getClient() {
         if (Objects.isNull(client)) {
@@ -223,21 +133,22 @@ public class ApacheHttpProxy extends AbstractHttpProxy {
      * @return
      */
     private static CloseableHttpClient initClient() {
+        ApacheHttpConfig apacheHttpConfig = SpringUtil.getBean(ApacheHttpConfig.class);
         // 设置协议http和https对应的处理socket链接工厂的对象
         RegistryBuilder<ConnectionSocketFactory> socketFactoryBuilder = RegistryBuilder.create();
         socketFactoryBuilder.register("http", PlainConnectionSocketFactory.INSTANCE);
         // 设置协议http和https对应的处理socket链接工厂的对象
-        Optional.ofNullable(createIgnoreVerifySSL())
+        Optional.ofNullable(createIgnoreVerifySSL(apacheHttpConfig))
                 .ifPresent(sslContext -> socketFactoryBuilder.register("https",
                         new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE)));
         // 设置链接池
         PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(socketFactoryBuilder.build());
-        connManager.setMaxTotal(MAX_TOTAL_CONNECTIONS);
-        connManager.setDefaultMaxPerRoute(MAX_CONNECTION_PER_HOST);
+        connManager.setMaxTotal(apacheHttpConfig.getMaxTotalConnections());
+        connManager.setDefaultMaxPerRoute(apacheHttpConfig.getMaxConnectionPerHost());
         //创建自定义的httpclient对象
         return HttpClients.custom().setConnectionManager(connManager)
-                .setDefaultRequestConfig(RequestConfig.custom().setSocketTimeout(CONNECTION_TIMEOUT)
-                        .setConnectTimeout(SOCKET_TIMEOUT).setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT).build()
+                .setDefaultRequestConfig(RequestConfig.custom().setSocketTimeout(apacheHttpConfig.getSocketTimeout())
+                        .setConnectTimeout(apacheHttpConfig.getConnectionTimeout()).setConnectionRequestTimeout(apacheHttpConfig.getConnectionRequestTimeout()).build()
                 ).build();
     }
 
@@ -245,10 +156,11 @@ public class ApacheHttpProxy extends AbstractHttpProxy {
      * 创建ssl
      *
      * @return
+     * @param apacheHttpConfig
      */
-    private static SSLContext createIgnoreVerifySSL() {
+    private static SSLContext createIgnoreVerifySSL(ApacheHttpConfig apacheHttpConfig) {
         try {
-            SSLContext ctx = SSLContext.getInstance(SSL_PROTOCOL);
+            SSLContext ctx = SSLContext.getInstance(apacheHttpConfig.getSslProtocol());
             X509TrustManager tm = new X509TrustManager() {
                 @Override
                 public X509Certificate[] getAcceptedIssuers() {

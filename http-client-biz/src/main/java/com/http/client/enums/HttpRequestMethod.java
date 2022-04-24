@@ -16,5 +16,11 @@ public enum HttpRequestMethod {
     /**
      * 不指定,如果方法上为null,则会去取接口上的值,如果接口上也是null,默认get
      */
-    NULL
+    NULL,
+    PUT,
+    DELETE,
+    HEAD,
+    OPTIONS,
+    TRACE,
+    PATCH
 }
