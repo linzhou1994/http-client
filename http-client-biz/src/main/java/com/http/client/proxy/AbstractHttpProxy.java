@@ -1,7 +1,6 @@
 package com.http.client.proxy;
 
 
-import com.biz.tool.spring.SpringUtil;
 import com.http.client.annotation.HttpClient;
 import com.http.client.bo.HttpClientRequest;
 import com.http.client.context.HttpRequestContext;
@@ -13,6 +12,7 @@ import com.http.client.handler.http.request.SetHttpParamHandlerManager;
 import com.http.client.handler.http.result.HttpClientResultHandlerManager;
 import com.http.client.interceptor.HttpClientInterceptor;
 import com.http.client.response.BaseHttpClientResponse;
+import com.http.client.tool.spring.SpringUtil;
 import lombok.Data;
 
 import java.lang.annotation.Annotation;

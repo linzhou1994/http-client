@@ -1,10 +1,9 @@
 package com.http.client.handler.analysis.method.impl.url;
 
-import com.biz.tool.annotations.AnnotationUtil;
-import com.http.client.annotation.HttpParam;
 import com.http.client.annotation.HttpUrl;
 import com.http.client.context.url.HttpRequestUrl;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
+import com.http.client.tool.annotations.AnnotationUtil;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;

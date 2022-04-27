@@ -1,7 +1,7 @@
 package com.http.client.context.body.file;
 
-import com.biz.tool.file.FileUtil;
 import com.http.client.annotation.HttpFile;
+import com.http.client.tool.file.FileUtil;
 
 import java.io.File;
 import java.io.IOException;

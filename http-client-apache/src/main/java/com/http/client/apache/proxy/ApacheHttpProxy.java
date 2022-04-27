@@ -1,13 +1,13 @@
 package com.http.client.apache.proxy;
 
 
-import com.biz.tool.spring.SpringUtil;
 import com.http.client.apache.proxy.handler.ApacheHttpProxyHandler;
 import com.http.client.apache.proxy.handler.ApacheHttpProxyHandlerManager;
 import com.http.client.context.HttpRequestContext;
 import com.http.client.context.header.HttpHeader;
 import com.http.client.proxy.AbstractHttpProxy;
 import com.http.client.response.BaseHttpClientResponse;
+import com.http.client.tool.spring.SpringUtil;
 import com.http.client.utils.AutoCloseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;

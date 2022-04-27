@@ -1,9 +1,7 @@
 package com.http.client.interceptor.impl.explain;
 
-import com.biz.tool.spring.SpringUtil;
 import com.http.client.context.HttpRequestContext;
-import com.http.client.handler.http.result.HttpClientResultHandler;
-import org.springframework.stereotype.Component;
+import com.http.client.tool.spring.SpringUtil;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;

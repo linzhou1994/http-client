@@ -1,7 +1,7 @@
 package com.http.client.handler.http.result;
 
-import com.biz.tool.spring.SpringUtil;
 import com.http.client.response.BaseHttpClientResponse;
+import com.http.client.tool.spring.SpringUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;

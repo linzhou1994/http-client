@@ -2,6 +2,7 @@ package com.http.client.utils;
 
 import com.http.client.annotation.HttpClient;
 import com.http.client.context.form.Form;
+import com.http.client.tool.spring.PropertyUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.MalformedURLException;

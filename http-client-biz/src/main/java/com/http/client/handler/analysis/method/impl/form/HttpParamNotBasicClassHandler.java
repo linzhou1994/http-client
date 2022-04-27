@@ -1,12 +1,12 @@
 package com.http.client.handler.analysis.method.impl.form;
 
 import com.alibaba.fastjson.JSON;
-import com.biz.tool.annotations.AnnotationUtil;
 import com.http.client.annotation.HttpParam;
 import com.http.client.context.form.NameValueParam;
 import com.http.client.exception.ParamException;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
-import com.http.client.utils.ReflectUtil;
+import com.http.client.tool.annotations.AnnotationUtil;
+import com.http.client.tool.reflect.ReflectUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -85,7 +85,7 @@ public class HttpParamNotBasicClassHandler implements AnalysisMethodParamHandler
         List<NameValueParam> nameValueParams = new ArrayList<>(allFieldAndValue.size());
 
         for (ReflectUtil.ReflectField reflectField : allFieldAndValue) {
-            String value = objectToString(reflectField.getValue());
+            String value = objectToString(reflectField);
             if (StringUtils.isBlank(value)) {
                 continue;
             }
@@ -96,14 +96,15 @@ public class HttpParamNotBasicClassHandler implements AnalysisMethodParamHandler
         return nameValueParams;
     }
 
-    private String objectToString(Object o) {
-        if (Objects.isNull(o)) {
+    private String objectToString(ReflectUtil.ReflectField reflectField) {
+        Object value = reflectField.getValue();
+        if (Objects.isNull(value)) {
             return null;
         }
-        if (o instanceof String) {
-            return (String) o;
+        if (value instanceof String) {
+            return (String) value;
         }
-        return JSON.toJSONString(o);
+        return JSON.toJSONString(value);
     }
 
     /**

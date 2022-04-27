@@ -1,10 +1,10 @@
 package com.http.client.handler.analysis.method.impl.form;
 
-import com.biz.tool.annotations.AnnotationUtil;
 import com.http.client.annotation.HttpParam;
 import com.http.client.context.form.AnnotationNameValueParam;
 import com.http.client.exception.ParamException;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
+import com.http.client.tool.annotations.AnnotationUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 

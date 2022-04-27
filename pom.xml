@@ -12,6 +12,7 @@
         <module>http-client-biz</module>
         <module>http-client-apache</module>
         <module>http-client-okhttp</module>
+        <module>http-client-tool</module>
     </modules>
 
     <parent>

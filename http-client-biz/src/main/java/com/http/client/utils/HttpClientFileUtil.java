@@ -1,9 +1,9 @@
 package com.http.client.utils;
 
-import com.biz.tool.file.FileUtil;
 import com.http.client.constant.HttpClientConstant;
 import com.http.client.response.BaseHttpClientResponse;
 import com.http.client.response.HttpClientResponse;
+import com.http.client.tool.file.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.mock.web.MockMultipartFile;
 

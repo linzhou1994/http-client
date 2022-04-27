@@ -1,6 +1,5 @@
 package com.http.client.handler.analysis.method.impl.body;
 
-import com.biz.tool.annotations.AnnotationUtil;
 import com.http.client.annotation.HttpFile;
 import com.http.client.bo.FileParam;
 import com.http.client.context.body.file.FileBody;
@@ -8,6 +7,7 @@ import com.http.client.context.body.file.UploadFile;
 import com.http.client.context.body.file.UploadMultipartFile;
 import com.http.client.exception.ParamException;
 import com.http.client.handler.analysis.method.AnalysisMethodParamHandler;
+import com.http.client.tool.annotations.AnnotationUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 

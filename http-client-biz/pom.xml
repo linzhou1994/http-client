@@ -19,8 +19,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.biz.tool</groupId>
-            <artifactId>biz-tool</artifactId>
+            <groupId>com.http.client</groupId>
+            <artifactId>http-client-tool</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
