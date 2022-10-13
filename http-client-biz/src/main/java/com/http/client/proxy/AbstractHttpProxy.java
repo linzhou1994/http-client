@@ -53,6 +53,7 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
     }
 
     private Object sendHttp(HttpRequestContext context) throws Throwable {
+        BaseHttpClientResponse response = null;
         try {
             //解析参数
             analysisMethodParam(context);
@@ -63,14 +64,14 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
             if (Objects.nonNull(rlt)) {
                 return rlt;
             }
-            BaseHttpClientResponse response = doInvoke(context);
+            response = doInvoke(context);
             response.setContext(context);
             rlt = HttpClientResultHandlerManager.getReturnObject(response);
             //执行httpAfter方法处理返回数据
             return runHttpAfter(response, rlt);
         } catch (Throwable throwable) {
             //执行异常拦截
-            Object rlt = runHttpException(context, throwable);
+            Object rlt = runHttpException(context,response, throwable);
             if (Objects.nonNull(rlt)) {
                 return rlt;
             }
@@ -168,14 +169,14 @@ public abstract class AbstractHttpProxy implements HttpProxy, InvocationHandler 
 
     /**
      * 执行httpAfter方法
-     *
-     * @param context
+     *  @param context
+     * @param response
      * @param e
      */
-    private Object runHttpException(HttpRequestContext context, Throwable e) throws Exception {
+    private Object runHttpException(HttpRequestContext context, BaseHttpClientResponse response, Throwable e) throws Exception {
         Object rlt = null;
         for (HttpClientInterceptor httpClientInterceptor : getHttpClientInterceptorList()) {
-            rlt = httpClientInterceptor.httpException(context, e);
+            rlt = httpClientInterceptor.httpException(context,response, e);
         }
         return rlt;
     }

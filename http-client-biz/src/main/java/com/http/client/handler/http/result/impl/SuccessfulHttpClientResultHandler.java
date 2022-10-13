@@ -43,8 +43,8 @@ import org.springframework.stereotype.Component;
  * @author: linzhou
  * @description : 判断本次请求状态是否是200
  */
-@Component
-@Order(-10)
+//@Component
+//@Order(-10)
 public class SuccessfulHttpClientResultHandler implements HttpClientResultHandler {
     @Override
     public Object getReturnObject(HttpClientResponse response, Class<?> returnType) throws Exception {

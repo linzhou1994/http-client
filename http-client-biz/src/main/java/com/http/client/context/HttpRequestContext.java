@@ -141,4 +141,8 @@ public class HttpRequestContext {
         }
         return null;
     }
+
+    public Class<?> getReturnType(){
+        return getMethod().getReturnType();
+    }
 }

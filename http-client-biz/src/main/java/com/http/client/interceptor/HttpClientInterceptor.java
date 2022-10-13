@@ -1,6 +1,7 @@
 package com.http.client.interceptor;
 
 import com.http.client.context.HttpRequestContext;
+import com.http.client.response.BaseHttpClientResponse;
 import com.http.client.response.HttpClientResponse;
 
 /**
@@ -36,10 +37,11 @@ public interface HttpClientInterceptor {
      * http请求发生异常后调用
      *
      * @param context 请求上下文
+     * @param response
      * @param e       异常类
      * @return 返回一个异常时的结果, 如果返回值为null, 则异常不处理
      */
-    default Object httpException(HttpRequestContext context, Throwable e) throws Exception {
+    default Object httpException(HttpRequestContext context, BaseHttpClientResponse response, Throwable e) throws Exception {
         return null;
     }
 

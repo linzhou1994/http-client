@@ -6,6 +6,7 @@ import com.http.client.context.HttpRequestContext;
 import com.http.client.context.body.Body;
 import com.http.client.context.form.Form;
 import com.http.client.interceptor.HttpClientInterceptor;
+import com.http.client.response.BaseHttpClientResponse;
 import com.http.client.response.HttpClientResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @description:
@@ -34,7 +36,7 @@ public class LogInterceptor implements HttpClientInterceptor {
         Body body = context.getBody();
         List<Form> nameValueParams = context.getNameValueParams();
 
-        String result = getResult(response, rlt);
+        String result = getResult(response, response.getContext().getReturnType());
         LogInfo logInfo = new LogInfo(httpUrl, body, nameValueParams, result);
 
         logger.info(JSON.toJSONString(logInfo));
@@ -43,17 +45,22 @@ public class LogInterceptor implements HttpClientInterceptor {
     }
 
     @Override
-    public Object httpException(HttpRequestContext context, Throwable e) throws Exception {
+    public Object httpException(HttpRequestContext context, BaseHttpClientResponse response, Throwable e) throws Exception {
         String httpUrl = context.getHttpUrl();
         Body body = context.getBody();
         List<Form> nameValueParams = context.getNameValueParams();
-        LogInfo logInfo = new LogInfo(httpUrl, body, nameValueParams, null);
+        String result = getResult(response, context.getReturnType());
+        LogInfo logInfo = new LogInfo(httpUrl, body, nameValueParams, result);
         logger.error(JSON.toJSONString(logInfo), e);
         return null;
     }
 
-    private String getResult(HttpClientResponse response, Object rlt) throws IOException {
-        return (rlt instanceof File) || (rlt instanceof MockMultipartFile) ? "is file" : response.result();
+    private String getResult(HttpClientResponse response, Class<?> returnType) throws IOException {
+        if (Objects.isNull(response)){
+            return "null";
+        }
+
+        return (returnType == File.class) || (returnType == MockMultipartFile.class) ? "is file" : response.result();
     }
 
     public static class LogInfo {
