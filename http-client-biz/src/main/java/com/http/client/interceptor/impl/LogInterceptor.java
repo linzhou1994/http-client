@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +61,7 @@ public class LogInterceptor implements HttpClientInterceptor {
             return "null";
         }
 
-        return (returnType == File.class) || (returnType == MockMultipartFile.class) ? "is file" : response.result();
+        return returnType.isAssignableFrom( File.class) || returnType.isAssignableFrom( MultipartFile.class) ? "is file" : response.result();
     }
 
     public static class LogInfo {
