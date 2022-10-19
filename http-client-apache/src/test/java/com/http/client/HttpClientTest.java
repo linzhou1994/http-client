@@ -1,6 +1,7 @@
 package com.http.client;
 
 
+import com.alibaba.fastjson.JSON;
 import com.http.client.context.url.HttpRequestUrl;
 import com.http.client.client.DownloadFileClient;
 import com.http.client.tool.file.FileUtil;
@@ -33,9 +34,9 @@ public class HttpClientTest extends BaseTest {
         LoginParam p = new LoginParam();
         p.setPassword("12345678");
         p.setName("src/main/resources/httpClient");
-        String rlt = httpPropertyTestClient.postLogin(p);
-        log.info("rlt1:" + rlt);
-         rlt = httpTestClient.postLogin(p);
+        LoginParam param = httpPropertyTestClient.postLogin(p);
+        log.info("rlt1:" + JSON.toJSONString(param));
+         String rlt = httpTestClient.postLogin(p);
         log.info("rlt1:" + rlt);
     }
 

@@ -25,7 +25,7 @@ public interface HttpPropertyTestClient {
      * @return
      */
     @HttpClient(path = "postLogin",method = HttpRequestMethod.POST)
-    String postLogin(LoginParam param);
+    LoginParam postLogin(LoginParam param);
 
     /**
      * 无参的get请求

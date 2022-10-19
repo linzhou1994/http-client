@@ -14,7 +14,7 @@ public class LoginController {
     public String postLogin(@RequestBody LoginParam param){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("url","postLogin");
-        jsonObject.put("name",param.getName());
+        jsonObject.put("name","rlt"+param.getName());
         jsonObject.put("password",param.getPassword());
         return jsonObject.toJSONString();
     }
