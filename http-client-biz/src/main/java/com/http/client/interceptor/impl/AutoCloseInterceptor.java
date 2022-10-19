@@ -49,7 +49,7 @@ import org.springframework.stereotype.Component;
 @Order(-1000)
 public class AutoCloseInterceptor implements HttpClientInterceptor {
     @Override
-    public Object httpAfter(HttpClientResponse response, Object rlt) throws Exception {
+    public Object returnObjectAfter(HttpClientResponse response, Object rlt) throws Exception {
         AutoCloseUtil.closeAll();
         return rlt;
     }

@@ -30,6 +30,10 @@ public class ObjectHttpClientResultHandler implements HttpClientResultHandler {
         if (returnType == String.class){
             return result;
         }
+        return getObject(response, result);
+    }
+
+    private Object getObject(HttpClientResponse response, String result) {
         Object object =toJson(result);
         if (!(object instanceof JSON)){
             //无法转成json,则不处理

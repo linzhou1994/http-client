@@ -51,7 +51,7 @@ import java.util.Set;
 public class AnnotationInterceptor implements HttpClientInterceptor {
 
     @Override
-    public Object httpBefore(HttpRequestContext context) {
+    public Object runHttpBefore(HttpRequestContext context) {
 
         Set<Class<?extends Annotation>> breakExplain = new HashSet<>();
         breakExplain.add(HttpClient.class);

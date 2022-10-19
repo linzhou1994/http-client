@@ -31,7 +31,7 @@ public class LogInterceptor implements HttpClientInterceptor {
 
 
     @Override
-    public Object httpAfter(HttpClientResponse response, Object rlt) throws Exception {
+    public Object returnObjectAfter(HttpClientResponse response, Object rlt) throws Exception {
         String httpUrl = response.getHttpUrl();
         HttpRequestContext context = response.getContext();
         Body body = context.getBody();
